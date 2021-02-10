@@ -1,2 +1,2 @@
-include ':service'
+include ':service', ':interface'
 rootProject.name = "XposedService"
