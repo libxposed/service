@@ -1,0 +1,2 @@
+include ':service'
+rootProject.name = "XposedService"
