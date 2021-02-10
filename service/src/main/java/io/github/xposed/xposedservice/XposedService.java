@@ -1,7 +1,10 @@
 package io.github.xposed.xposedservice;
 
+import android.content.pm.PackageInfo;
 import android.os.IBinder;
 import android.os.RemoteException;
+
+import java.util.List;
 
 public class XposedService implements IXposedService {
     private static IBinder serviceBinder = null;
@@ -21,6 +24,11 @@ public class XposedService implements IXposedService {
     @Override
     public int getVersion() throws RemoteException {
         return service.getVersion();
+    }
+
+    @Override
+    public List<PackageInfo> getInstalledPackagesFromAllUsers(int flags) throws RemoteException {
+        return service.getInstalledPackagesFromAllUsers(flags);
     }
 
     @Override
