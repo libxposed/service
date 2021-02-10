@@ -25,6 +25,6 @@ public class XposedService implements IXposedService {
 
     @Override
     public IBinder asBinder() {
-        return servicebinder;
+        return serviceBinder;
     }
 }
