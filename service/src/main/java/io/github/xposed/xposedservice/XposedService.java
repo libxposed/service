@@ -6,6 +6,8 @@ import android.os.RemoteException;
 
 import java.util.List;
 
+import io.github.xposed.xposedservice.utils.ParceledListSlice;
+
 public class XposedService implements IXposedService {
     private static IBinder serviceBinder = null;
     private static IXposedService service = null;
@@ -27,7 +29,7 @@ public class XposedService implements IXposedService {
     }
 
     @Override
-    public List<PackageInfo> getInstalledPackagesFromAllUsers(int flags) throws RemoteException {
+    public ParceledListSlice<PackageInfo> getInstalledPackagesFromAllUsers(int flags) throws RemoteException {
         return service.getInstalledPackagesFromAllUsers(flags);
     }
 
