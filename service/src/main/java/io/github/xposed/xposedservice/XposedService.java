@@ -9,13 +9,13 @@ public class XposedService implements IXposedService {
     private static XposedService instance = null;
 
     public static XposedService getService() {
-        if (serviceBinder != null && service != null) {
+        if (serviceBinder != null && service == null) {
             service = IXposedService.Stub.asInterface(serviceBinder);
         }
         if (instance == null) {
             instance = new XposedService();
         }
-        return instance;
+        return service == null ? null : instance;
     }
 
     @Override
@@ -25,6 +25,6 @@ public class XposedService implements IXposedService {
 
     @Override
     public IBinder asBinder() {
-        return serviceBinder;
+        return servicebinder;
     }
 }
