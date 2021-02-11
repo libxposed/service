@@ -4,5 +4,4 @@ import io.github.xposed.xposedservice.utils.ParceledListSlice;
 
 interface IXposedService {
     int getVersion() = 1;
-    ParceledListSlice<PackageInfo> getInstalledPackagesFromAllUsers(int flags) = 2;
 }
