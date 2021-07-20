@@ -35,8 +35,8 @@ import java.util.List;
  *
  */
 abstract class BaseParceledListSlice<T> implements Parcelable {
-    private static String TAG = "ParceledListSlice";
-    private static boolean DEBUG = false;
+    private static final String TAG = "ParceledListSlice";
+    private static final boolean DEBUG = false;
     /*
      * TODO get this number from somewhere else. For now set it to a quarter of
      * the 1MB limit.
