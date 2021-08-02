@@ -5,9 +5,10 @@ pluginManagement {
         mavenCentral()
     }
     plugins {
-        id 'com.android.library' version '4.2.2'
+        id("com.android.library").version("7.0.0")
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -15,5 +16,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-include ':service', ':interface'
+include(":service", ":interface")
 rootProject.name = "XposedService"
