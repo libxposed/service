@@ -21,26 +21,24 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 /**
  * Transfer a large list of Parcelable objects across an IPC.  Splits into
  * multiple transactions if needed.
- *
+ * <p>
  * Caveat: for efficiency and security, all elements must be the same concrete type.
  * In order to avoid writing the class name of each object, we must ensure that
  * each object is the same type, or else unparceling then reparceling the data may yield
  * a different result if the class name encoded in the Parcelable is a Base type.
  * See b/17671747.
- *
  */
 abstract class BaseParceledListSlice<T> implements Parcelable {
     private static final String TAG = "ParceledListSlice";
     private static final boolean DEBUG = false;
-    /*
-     * TODO get this number from somewhere else. For now set it to a quarter of
-     * the 1MB limit.
-     */
     private static final int MAX_IPC_SIZE = 64 * 1024;
     private final List<T> mList;
     private int mInlineCountLimit = Integer.MAX_VALUE;
@@ -49,10 +47,9 @@ abstract class BaseParceledListSlice<T> implements Parcelable {
         mList = list;
     }
 
-    @SuppressWarnings("unchecked")
     BaseParceledListSlice(Parcel p, ClassLoader loader) {
         final int N = p.readInt();
-        mList = new ArrayList<T>(N);
+        mList = new ArrayList<>(N);
         if (DEBUG) Log.d(TAG, "Retrieving " + N + " items");
         if (N <= 0) {
             return;
@@ -71,7 +68,7 @@ abstract class BaseParceledListSlice<T> implements Parcelable {
                 verifySameType(listElementClass, parcelable.getClass());
             }
             mList.add(parcelable);
-            if (DEBUG) Log.d(TAG, "Read inline #" + i + ": " + mList.get(mList.size()-1));
+            if (DEBUG) Log.d(TAG, "Read inline #" + i + ": " + mList.get(mList.size() - 1));
             i++;
         }
         if (i >= N) {
@@ -93,13 +90,15 @@ abstract class BaseParceledListSlice<T> implements Parcelable {
                 final T parcelable = readCreator(creator, reply, loader);
                 verifySameType(listElementClass, parcelable.getClass());
                 mList.add(parcelable);
-                if (DEBUG) Log.d(TAG, "Read extra #" + i + ": " + mList.get(mList.size()-1));
+                if (DEBUG) Log.d(TAG, "Read extra #" + i + ": " + mList.get(mList.size() - 1));
                 i++;
             }
             reply.recycle();
             data.recycle();
         }
     }
+
+    @SuppressWarnings("unchecked")
     private T readCreator(Parcelable.Creator<?> creator, Parcel p, ClassLoader loader) {
         if (creator instanceof Parcelable.ClassLoaderCreator<?>) {
             Parcelable.ClassLoaderCreator<?> classLoaderCreator =
@@ -108,16 +107,19 @@ abstract class BaseParceledListSlice<T> implements Parcelable {
         }
         return (T) creator.createFromParcel(p);
     }
+
     private static void verifySameType(final Class<?> expected, final Class<?> actual) {
-        if (!actual.equals(expected)) {
+        if (!Objects.equals(actual, expected)) {
             throw new IllegalArgumentException("Can't unparcel type "
                     + (actual == null ? null : actual.getName()) + " in list of type "
                     + (expected == null ? null : expected.getName()));
         }
     }
+
     public List<T> getList() {
         return mList;
     }
+
     /**
      * Set a limit on the maximum number of entries in the array that will be included
      * inline in the initial parcelling of this object.
@@ -125,6 +127,7 @@ abstract class BaseParceledListSlice<T> implements Parcelable {
     public void setInlineCountLimit(int maxCount) {
         mInlineCountLimit = maxCount;
     }
+
     /**
      * Write this to another Parcel. Note that this discards the internal Parcel
      * and should not be used anymore. This is so we can pass this to a Binder
@@ -179,7 +182,10 @@ abstract class BaseParceledListSlice<T> implements Parcelable {
             }
         }
     }
+
     protected abstract void writeElement(T parcelable, Parcel reply, int callFlags);
+
     protected abstract void writeParcelableCreator(T parcelable, Parcel dest);
+
     protected abstract Parcelable.Creator<?> readParcelableCreator(Parcel from, ClassLoader loader);
 }

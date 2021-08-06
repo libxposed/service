@@ -50,11 +50,7 @@ public class ParceledListSlice<T extends Parcelable> extends BaseParceledListSli
     }
 
     public static void putCreator(String name, Parcelable.Creator<?> creator) {
-        HashMap<String, Parcelable.Creator<?>> map = CREATORS.get(null);
-        if (map == null) {
-            map = new HashMap<>();
-            CREATORS.put(null, map);
-        }
+        var map = CREATORS.computeIfAbsent(null, k -> new HashMap<>());
         map.put(name, creator);
     }
 
@@ -67,7 +63,7 @@ public class ParceledListSlice<T extends Parcelable> extends BaseParceledListSli
     }
 
     public static <T extends Parcelable> ParceledListSlice<T> emptyList() {
-        return new ParceledListSlice<T>(Collections.<T>emptyList());
+        return new ParceledListSlice<>(Collections.emptyList());
     }
 
     @Override
@@ -99,75 +95,71 @@ public class ParceledListSlice<T extends Parcelable> extends BaseParceledListSli
         }
         Parcelable.Creator<?> creator;
         synchronized (CREATORS) {
-            HashMap<String, Parcelable.Creator<?>> map = CREATORS.get(loader);
-            if (map == null) {
-                map = new HashMap<>();
-                CREATORS.put(loader, map);
-            }
+            var map = CREATORS.computeIfAbsent(loader, k -> new HashMap<>());
             creator = map.get(name);
-            if (creator == null) {
-                try {
-                    // If loader == null, explicitly emulate Class.forName(String) "caller
-                    // classloader" behavior.
-                    ClassLoader parcelableClassLoader =
-                            (loader == null ? getClass().getClassLoader() : loader);
-                    // Avoid initializing the Parcelable class until we know it implements
-                    // Parcelable and has the necessary CREATOR field. http://b/1171613.
-                    Class<?> parcelableClass = Class.forName(name, false /* initialize */,
-                            parcelableClassLoader);
-                    if (!Parcelable.class.isAssignableFrom(parcelableClass)) {
-                        throw new BadParcelableException("Parcelable protocol requires subclassing "
-                                + "from Parcelable on class " + name);
-                    }
-                    Field f = parcelableClass.getField("CREATOR");
-                    if ((f.getModifiers() & Modifier.STATIC) == 0) {
-                        throw new BadParcelableException("Parcelable protocol requires "
-                                + "the CREATOR object to be static on class " + name);
-                    }
-                    Class<?> creatorType = f.getType();
-                    if (!Parcelable.Creator.class.isAssignableFrom(creatorType)) {
-                        // Fail before calling Field.get(), not after, to avoid initializing
-                        // parcelableClass unnecessarily.
-                        throw new BadParcelableException("Parcelable protocol requires a "
-                                + "Parcelable.Creator object called "
-                                + "CREATOR on class " + name);
-                    }
-                    creator = (Parcelable.Creator<?>) f.get(null);
-                } catch (IllegalAccessException e) {
-                    Log.e(TAG, "Illegal access when unmarshalling: " + name, e);
-                    throw new BadParcelableException(
-                            "IllegalAccessException when unmarshalling: " + name);
-                } catch (ClassNotFoundException e) {
-                    Log.e(TAG, "Class not found when unmarshalling: " + name, e);
-                    throw new BadParcelableException(
-                            "ClassNotFoundException when unmarshalling: " + name);
-                } catch (NoSuchFieldException e) {
+            if (creator != null) return creator;
+            try {
+                // If loader == null, explicitly emulate Class.forName(String) "caller
+                // classloader" behavior.
+                ClassLoader parcelableClassLoader =
+                        (loader == null ? getClass().getClassLoader() : loader);
+                // Avoid initializing the Parcelable class until we know it implements
+                // Parcelable and has the necessary CREATOR field. http://b/1171613.
+                Class<?> parcelableClass = Class.forName(name, false /* initialize */,
+                        parcelableClassLoader);
+                if (!Parcelable.class.isAssignableFrom(parcelableClass)) {
+                    throw new BadParcelableException("Parcelable protocol requires subclassing "
+                            + "from Parcelable on class " + name);
+                }
+                Field f = parcelableClass.getField("CREATOR");
+                if ((f.getModifiers() & Modifier.STATIC) == 0) {
+                    throw new BadParcelableException("Parcelable protocol requires "
+                            + "the CREATOR object to be static on class " + name);
+                }
+                Class<?> creatorType = f.getType();
+                if (!Creator.class.isAssignableFrom(creatorType)) {
+                    // Fail before calling Field.get(), not after, to avoid initializing
+                    // parcelableClass unnecessarily.
                     throw new BadParcelableException("Parcelable protocol requires a "
                             + "Parcelable.Creator object called "
                             + "CREATOR on class " + name);
                 }
-                if (creator == null) {
-                    throw new BadParcelableException("Parcelable protocol requires a "
-                            + "non-null Parcelable.Creator object called "
-                            + "CREATOR on class " + name);
-                }
-
-                map.put(name, creator);
+                creator = (Creator<?>) f.get(null);
+            } catch (IllegalAccessException e) {
+                Log.e(TAG, "Illegal access when unmarshalling: " + name, e);
+                throw new BadParcelableException(
+                        "IllegalAccessException when unmarshalling: " + name);
+            } catch (ClassNotFoundException e) {
+                Log.e(TAG, "Class not found when unmarshalling: " + name, e);
+                throw new BadParcelableException(
+                        "ClassNotFoundException when unmarshalling: " + name);
+            } catch (NoSuchFieldException e) {
+                throw new BadParcelableException("Parcelable protocol requires a "
+                        + "Parcelable.Creator object called "
+                        + "CREATOR on class " + name);
             }
+            if (creator == null) {
+                throw new BadParcelableException("Parcelable protocol requires a "
+                        + "non-null Parcelable.Creator object called "
+                        + "CREATOR on class " + name);
+            }
+
+            map.put(name, creator);
         }
 
         return creator;
     }
 
+    @SuppressWarnings("rawtypes")
     public static final Parcelable.ClassLoaderCreator<ParceledListSlice> CREATOR =
-            new Parcelable.ClassLoaderCreator<ParceledListSlice>() {
+            new Parcelable.ClassLoaderCreator<>() {
                 public ParceledListSlice createFromParcel(Parcel in) {
-                    return new ParceledListSlice(in, null);
+                    return new ParceledListSlice<>(in, null);
                 }
 
                 @Override
                 public ParceledListSlice createFromParcel(Parcel in, ClassLoader loader) {
-                    return new ParceledListSlice(in, loader);
+                    return new ParceledListSlice<>(in, loader);
                 }
 
                 @Override
