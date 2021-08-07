@@ -40,7 +40,9 @@ abstract class BaseParceledListSlice<T> implements Parcelable {
     private static final String TAG = "ParceledListSlice";
     private static final boolean DEBUG = false;
     private static final int MAX_IPC_SIZE = 64 * 1024;
+
     private final List<T> mList;
+
     private int mInlineCountLimit = Integer.MAX_VALUE;
 
     public BaseParceledListSlice(List<T> list) {
@@ -54,20 +56,25 @@ abstract class BaseParceledListSlice<T> implements Parcelable {
         if (N <= 0) {
             return;
         }
+
         Parcelable.Creator<?> creator = readParcelableCreator(p, loader);
         Class<?> listElementClass = null;
+
         int i = 0;
         while (i < N) {
             if (p.readInt() == 0) {
                 break;
             }
+
             final T parcelable = readCreator(creator, p, loader);
             if (listElementClass == null) {
                 listElementClass = parcelable.getClass();
             } else {
                 verifySameType(listElementClass, parcelable.getClass());
             }
+
             mList.add(parcelable);
+
             if (DEBUG) Log.d(TAG, "Read inline #" + i + ": " + mList.get(mList.size() - 1));
             i++;
         }
@@ -89,7 +96,9 @@ abstract class BaseParceledListSlice<T> implements Parcelable {
             while (i < N && reply.readInt() != 0) {
                 final T parcelable = readCreator(creator, reply, loader);
                 verifySameType(listElementClass, parcelable.getClass());
+
                 mList.add(parcelable);
+
                 if (DEBUG) Log.d(TAG, "Read extra #" + i + ": " + mList.get(mList.size() - 1));
                 i++;
             }
@@ -145,9 +154,11 @@ abstract class BaseParceledListSlice<T> implements Parcelable {
             int i = 0;
             while (i < N && i < mInlineCountLimit && dest.dataSize() < MAX_IPC_SIZE) {
                 dest.writeInt(1);
+
                 final T parcelable = mList.get(i);
                 verifySameType(listElementClass, parcelable.getClass());
                 writeElement(parcelable, dest, callFlags);
+
                 if (DEBUG) Log.d(TAG, "Wrote inline #" + i + ": " + mList.get(i));
                 i++;
             }
@@ -164,9 +175,11 @@ abstract class BaseParceledListSlice<T> implements Parcelable {
                         if (DEBUG) Log.d(TAG, "Writing more @" + i + " of " + N);
                         while (i < N && reply.dataSize() < MAX_IPC_SIZE) {
                             reply.writeInt(1);
+
                             final T parcelable = mList.get(i);
                             verifySameType(listElementClass, parcelable.getClass());
                             writeElement(parcelable, reply, callFlags);
+
                             if (DEBUG) Log.d(TAG, "Wrote extra #" + i + ": " + mList.get(i));
                             i++;
                         }
