@@ -65,7 +65,7 @@ public class ParceledListSlice<T extends Parcelable> extends BaseParceledListSli
     @SuppressLint("NewApi")
     @Override
     protected Parcelable.Creator<?> readParcelableCreator(Parcel from, ClassLoader loader) {
-        return from.readParcelableCreator(loader);
+        return from.readParcelableCreator(loader == null ? getClass().getClassLoader() : loader);
     }
 
     @SuppressWarnings("rawtypes")
