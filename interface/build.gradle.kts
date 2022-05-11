@@ -28,3 +28,7 @@ android {
         targetCompatibility = androidTargetCompatibility
     }
 }
+
+dependencies {
+    api("dev.rikka.rikkax.parcelablelist:parcelablelist:2.0.0")
+}
