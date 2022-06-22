@@ -30,5 +30,5 @@ android {
 }
 
 dependencies {
-    api("dev.rikka.rikkax.parcelablelist:parcelablelist:2.0.0")
+    api("dev.rikka.rikkax.parcelablelist:parcelablelist:2.0.1")
 }
