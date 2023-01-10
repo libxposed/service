@@ -19,4 +19,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "libxposed"
 
-include(":service-interface")
+include(":interface")
