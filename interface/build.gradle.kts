@@ -45,7 +45,7 @@ publishing {
                 licenses {
                     license {
                         name.set("Apache License 2.0")
-                        url.set("https://github.com/libxposed/api/blob/master/LICENSE")
+                        url.set("https://github.com/libxposed/service/blob/master/LICENSE")
                     }
                 }
                 developers {
@@ -56,7 +56,7 @@ publishing {
                 }
                 scm {
                     connection.set("scm:git:https://github.com/libxposed/service.git")
-                    url.set("https://github.com/libxposed/api")
+                    url.set("https://github.com/libxposed/service")
                 }
             }
             afterEvaluate {
