@@ -3,6 +3,8 @@ package io.github.libxposed.service;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,12 +18,12 @@ public final class XposedServiceHelper {
          *
          * @param service Service instance
          */
-        void onServiceBind(XposedService service);
+        void onServiceBind(@NonNull XposedService service);
 
         /**
          * Callback when the service is dead
          */
-        void onServiceDied(XposedService service);
+        void onServiceDied(@NonNull XposedService service);
     }
 
     private static final String TAG = "XposedServiceHelper";
