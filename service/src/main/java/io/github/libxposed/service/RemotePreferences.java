@@ -66,45 +66,41 @@ public final class RemotePreferences implements SharedPreferences {
     @Nullable
     @Override
     public String getString(String key, @Nullable String defValue) {
-        var v = (String) mMap.getOrDefault(key, defValue);
-        if (v != null) return v;
-        return defValue;
+        return (String) mMap.getOrDefault(key, defValue);
     }
 
     @Nullable
     @Override
     public Set<String> getStringSet(String key, @Nullable Set<String> defValues) {
-        var v = (Set<String>) mMap.getOrDefault(key, defValues);
-        if (v != null) return v;
-        return defValues;
+        return (Set<String>) mMap.getOrDefault(key, defValues);
     }
 
     @Override
     public int getInt(String key, int defValue) {
-        var v = (Integer) mMap.getOrDefault(key, defValue);
-        if (v != null) return v;
-        return defValue;
+        var v = mMap.getOrDefault(key, defValue);
+        assert v != null;
+        return (int) v;
     }
 
     @Override
     public long getLong(String key, long defValue) {
-        var v = (Long) mMap.getOrDefault(key, defValue);
-        if (v != null) return v;
-        return defValue;
+        var v = mMap.getOrDefault(key, defValue);
+        assert v != null;
+        return (long) v;
     }
 
     @Override
     public float getFloat(String key, float defValue) {
-        var v = (Float) mMap.getOrDefault(key, defValue);
-        if (v != null) return v;
-        return defValue;
+        var v = mMap.getOrDefault(key, defValue);
+        assert v != null;
+        return (float) v;
     }
 
     @Override
     public boolean getBoolean(String key, boolean defValue) {
-        var v = (Boolean) mMap.getOrDefault(key, defValue);
-        if (v != null) return v;
-        return defValue;
+        var v = mMap.getOrDefault(key, defValue);
+        assert v != null;
+        return (boolean) v;
     }
 
     @Override
@@ -146,7 +142,8 @@ public final class RemotePreferences implements SharedPreferences {
 
         @Override
         public SharedPreferences.Editor putStringSet(String key, @Nullable Set<String> values) {
-            if (values != null) values.forEach(v -> putString(key, v));
+            if (values == null) remove(key);
+            else put(key, values);
             return this;
         }
 
