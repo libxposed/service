@@ -28,11 +28,11 @@ public final class RemotePreferences implements SharedPreferences {
 
     private static final String TAG = "RemotePreferences";
     private static final Object CONTENT = new Object();
-    private static final Lock LOCK = new ReentrantLock();
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
     private final XposedService mService;
     private final String mGroup;
+    private final Lock mLock = new ReentrantLock();
     private final Map<String, Object> mMap = new ConcurrentHashMap<>();
     private final Map<OnSharedPreferenceChangeListener, Object> mListeners = Collections.synchronizedMap(new WeakHashMap<>());
 
@@ -199,10 +199,8 @@ public final class RemotePreferences implements SharedPreferences {
                 List<String> changes = new ArrayList<>(mDelete.size() + mMap.size());
                 changes.addAll(mDelete);
                 changes.addAll(mMap.keySet());
-                synchronized (mListeners) {
-                    for (var key : changes) {
-                        mListeners.keySet().forEach(listener -> listener.onSharedPreferenceChanged(RemotePreferences.this, key));
-                    }
+                for (var key : changes) {
+                    mListeners.keySet().forEach(listener -> listener.onSharedPreferenceChanged(RemotePreferences.this, key));
                 }
 
                 var bundle = new Bundle();
@@ -224,12 +222,12 @@ public final class RemotePreferences implements SharedPreferences {
 
         @Override
         public boolean commit() {
-            if (!LOCK.tryLock()) return false;
+            if (!mLock.tryLock()) return false;
             try {
                 doUpdate(true);
                 return true;
             } finally {
-                LOCK.unlock();
+                mLock.unlock();
             }
         }
 

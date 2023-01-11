@@ -50,7 +50,7 @@ publishing {
         register<MavenPublication>("service") {
             artifactId = "service"
             group = "io.github.libxposed"
-            version = "100"
+            version = "100-1.0.0"
             pom {
                 name.set("service")
                 description.set("Modern Xposed Service Interface")
