@@ -25,6 +25,81 @@ public final class XposedService {
         }
     }
 
+    /**
+     * Callback interface for module scope request
+     */
+    public interface IScopeCallback {
+        /**
+         * Callback when the request notification / window prompted
+         *
+         * @param packageName Package name of requested app
+         */
+        default void onScopeRequestPrompted(String packageName) {
+        }
+
+        /**
+         * Callback when the request is approved
+         *
+         * @param packageName Package name of requested app
+         */
+        default void onScopeRequestApproved(String packageName) {
+        }
+
+        /**
+         * Callback when the request is denied
+         *
+         * @param packageName Package name of requested app
+         */
+        default void onScopeRequestDenied(String packageName) {
+        }
+
+        /**
+         * Callback when the request is timeout or revoked
+         *
+         * @param packageName Package name of requested app
+         */
+        default void onScopeRequestTimeout(String packageName) {
+        }
+
+        /**
+         * Callback when the request is failed
+         *
+         * @param packageName Package name of requested app
+         * @param message     Error message
+         */
+        default void onScopeRequestFailed(String packageName, String message) {
+        }
+
+        private IXposedScopeCallback asInterface() {
+            return new IXposedScopeCallback.Stub() {
+                @Override
+                public void onScopeRequestPrompted(String packageName) {
+                    IScopeCallback.this.onScopeRequestPrompted(packageName);
+                }
+
+                @Override
+                public void onScopeRequestApproved(String packageName) {
+                    IScopeCallback.this.onScopeRequestApproved(packageName);
+                }
+
+                @Override
+                public void onScopeRequestDenied(String packageName) {
+                    IScopeCallback.this.onScopeRequestDenied(packageName);
+                }
+
+                @Override
+                public void onScopeRequestTimeout(String packageName) {
+                    IScopeCallback.this.onScopeRequestTimeout(packageName);
+                }
+
+                @Override
+                public void onScopeRequestFailed(String packageName, String message) {
+                    IScopeCallback.this.onScopeRequestFailed(packageName, message);
+                }
+            };
+        }
+    }
+
     public enum Privilege {
         /**
          * Unknown privilege value
@@ -182,9 +257,9 @@ public final class XposedService {
      * @param callback    Callback to be invoked when the request is completed or error occurred
      * @throws ServiceException If the service is dead or error occurred
      */
-    public void requestScope(@NonNull String packageName, @NonNull IXposedScopeCallback callback) {
+    public void requestScope(@NonNull String packageName, @NonNull IScopeCallback callback) {
         try {
-            mService.requestScope(packageName, callback);
+            mService.requestScope(packageName, callback.asInterface());
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }

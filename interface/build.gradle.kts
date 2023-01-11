@@ -89,4 +89,3 @@ signing {
     }
     sign(publishing.publications)
 }
-
