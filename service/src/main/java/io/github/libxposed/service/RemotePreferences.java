@@ -77,30 +77,30 @@ public final class RemotePreferences implements SharedPreferences {
 
     @Override
     public int getInt(String key, int defValue) {
-        var v = mMap.getOrDefault(key, defValue);
+        var v = (Integer) mMap.getOrDefault(key, defValue);
         assert v != null;
-        return (int) v;
+        return v;
     }
 
     @Override
     public long getLong(String key, long defValue) {
-        var v = mMap.getOrDefault(key, defValue);
+        var v = (Long) mMap.getOrDefault(key, defValue);
         assert v != null;
-        return (long) v;
+        return v;
     }
 
     @Override
     public float getFloat(String key, float defValue) {
-        var v = mMap.getOrDefault(key, defValue);
+        var v = (Float) mMap.getOrDefault(key, defValue);
         assert v != null;
-        return (float) v;
+        return v;
     }
 
     @Override
     public boolean getBoolean(String key, boolean defValue) {
-        var v = mMap.getOrDefault(key, defValue);
+        var v = (Boolean) mMap.getOrDefault(key, defValue);
         assert v != null;
-        return (boolean) v;
+        return v;
     }
 
     @Override
