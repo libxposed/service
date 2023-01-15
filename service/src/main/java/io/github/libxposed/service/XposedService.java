@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @SuppressWarnings("unused")
@@ -25,10 +26,12 @@ public final class XposedService {
         }
     }
 
+    private final static Map<OnScopeEventListener, IXposedScopeCallback> scopeCallbacks = new WeakHashMap<>();
+
     /**
      * Callback interface for module scope request
      */
-    public interface IScopeCallback {
+    public interface OnScopeEventListener {
         /**
          * Callback when the request notification / window prompted
          *
@@ -71,32 +74,32 @@ public final class XposedService {
         }
 
         private IXposedScopeCallback asInterface() {
-            return new IXposedScopeCallback.Stub() {
+            return scopeCallbacks.computeIfAbsent(this, (listener) -> new IXposedScopeCallback.Stub() {
                 @Override
                 public void onScopeRequestPrompted(String packageName) {
-                    IScopeCallback.this.onScopeRequestPrompted(packageName);
+                    listener.onScopeRequestPrompted(packageName);
                 }
 
                 @Override
                 public void onScopeRequestApproved(String packageName) {
-                    IScopeCallback.this.onScopeRequestApproved(packageName);
+                    listener.onScopeRequestApproved(packageName);
                 }
 
                 @Override
                 public void onScopeRequestDenied(String packageName) {
-                    IScopeCallback.this.onScopeRequestDenied(packageName);
+                    listener.onScopeRequestDenied(packageName);
                 }
 
                 @Override
                 public void onScopeRequestTimeout(String packageName) {
-                    IScopeCallback.this.onScopeRequestTimeout(packageName);
+                    listener.onScopeRequestTimeout(packageName);
                 }
 
                 @Override
                 public void onScopeRequestFailed(String packageName, String message) {
-                    IScopeCallback.this.onScopeRequestFailed(packageName, message);
+                    listener.onScopeRequestFailed(packageName, message);
                 }
-            };
+            });
         }
     }
 
@@ -257,7 +260,7 @@ public final class XposedService {
      * @param callback    Callback to be invoked when the request is completed or error occurred
      * @throws ServiceException If the service is dead or error occurred
      */
-    public void requestScope(@NonNull String packageName, @NonNull IScopeCallback callback) {
+    public void requestScope(@NonNull String packageName, @NonNull OnScopeEventListener callback) {
         try {
             mService.requestScope(packageName, callback.asInterface());
         } catch (RemoteException e) {
