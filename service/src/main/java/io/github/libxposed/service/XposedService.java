@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -125,7 +126,7 @@ public final class XposedService {
         FRAMEWORK_PRIVILEGE_APP,
 
         /**
-         * The framework is embedded in the hooked app, which means {@link #getRemotePreferences} and remote file streams will be null.
+         * The framework is embedded in the hooked app, which means {@link #getRemotePreferences} will be null and remote file is unsupported.
          */
         FRAMEWORK_PRIVILEGE_EMBEDDED
     }
@@ -326,67 +327,69 @@ public final class XposedService {
     /**
      * Open an InputStream to read a file from the module's shared data directory.
      *
-     * @param name File name
-     * @return The InputStream, null if the framework is embedded
-     * @throws ServiceException If the service is dead or error occurred
+     * @param name File name, must not contain path separators and . or ..
+     * @return The InputStream
+     * @throws FileNotFoundException If the file does not exist, the path is forbidden or remote file is not supported by the framework
      */
-    @Nullable
-    public FileInputStream openRemoteFileInput(@NonNull String name) {
+    @NonNull
+    public FileInputStream openRemoteFileInput(@NonNull String name) throws FileNotFoundException {
         try {
             var file = mService.openRemoteFile(name, MODE_READ_ONLY);
-            if (file == null) return null;
+            if (file == null) throw new FileNotFoundException();
             return new FileInputStream(file.getFileDescriptor());
         } catch (RemoteException e) {
-            throw new ServiceException(e);
+            throw new FileNotFoundException(e.getMessage());
         }
     }
 
     /**
      * Open an OutputStream to write a file to the module's shared data directory.
      *
-     * @param name File name
+     * @param name File name, must not contain path separators and . or ..
      * @param mode Operating mode
-     * @return The OutputStream, null if the framework is embedded
-     * @throws ServiceException If the service is dead or error occurred
+     * @return The OutputStream
+     * @throws FileNotFoundException If the path is forbidden or remote file is not supported by the framework
      */
-    @Nullable
-    public FileOutputStream openRemoteFileOutput(@NonNull String name, int mode) {
+    @NonNull
+    public FileOutputStream openRemoteFileOutput(@NonNull String name, int mode) throws FileNotFoundException {
         try {
             var file = mService.openRemoteFile(name, mode);
-            if (file == null) return null;
+            if (file == null) throw new FileNotFoundException();
             return new FileOutputStream(file.getFileDescriptor());
         } catch (RemoteException e) {
-            throw new ServiceException(e);
+            throw new FileNotFoundException(e.getMessage());
         }
     }
 
     /**
      * Delete a file in the module's shared data directory.
      *
-     * @param name File name
-     * @return true if successful, false if failed or the framework is embedded
-     * @throws ServiceException If the service is dead or error occurred
+     * @param name File name, must not contain path separators and . or ..
+     * @return true if successful, false if the file does not exist
+     * @throws FileNotFoundException If the path is forbidden or remote file is not supported by the framework
      */
-    public boolean deleteRemoteFile(@NonNull String name) {
+    public boolean deleteRemoteFile(@NonNull String name) throws FileNotFoundException {
         try {
             return mService.deleteRemoteFile(name);
         } catch (RemoteException e) {
-            throw new ServiceException(e);
+            throw new FileNotFoundException(e.getMessage());
         }
     }
 
     /**
      * List all files in the module's shared data directory.
      *
-     * @return The file list, null if the framework is embedded
-     * @throws ServiceException If the service is dead or error occurred
+     * @return The file list
+     * @throws FileNotFoundException If remote file is not supported by the framework
      */
-    @Nullable
-    public String[] listRemoteFiles() {
+    @NonNull
+    public String[] listRemoteFiles() throws FileNotFoundException {
         try {
-            return mService.listRemoteFiles();
+            var files = mService.listRemoteFiles();
+            if (files == null) throw new FileNotFoundException();
+            return files;
         } catch (RemoteException e) {
-            throw new ServiceException(e);
+            throw new FileNotFoundException(e.getMessage());
         }
     }
 }
