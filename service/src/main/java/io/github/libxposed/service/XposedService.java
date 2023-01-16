@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"resource", "unused"})
 public final class XposedService {
 
     public final static class ServiceException extends RuntimeException {
@@ -29,11 +29,11 @@ public final class XposedService {
     private final static Map<OnScopeEventListener, IXposedScopeCallback> scopeCallbacks = new WeakHashMap<>();
 
     /**
-     * Callback interface for module scope request
+     * Callback interface for module scope request.
      */
     public interface OnScopeEventListener {
         /**
-         * Callback when the request notification / window prompted
+         * Callback when the request notification / window prompted.
          *
          * @param packageName Package name of requested app
          */
@@ -41,7 +41,7 @@ public final class XposedService {
         }
 
         /**
-         * Callback when the request is approved
+         * Callback when the request is approved.
          *
          * @param packageName Package name of requested app
          */
@@ -49,7 +49,7 @@ public final class XposedService {
         }
 
         /**
-         * Callback when the request is denied
+         * Callback when the request is denied.
          *
          * @param packageName Package name of requested app
          */
@@ -57,7 +57,7 @@ public final class XposedService {
         }
 
         /**
-         * Callback when the request is timeout or revoked
+         * Callback when the request is timeout or revoked.
          *
          * @param packageName Package name of requested app
          */
@@ -65,7 +65,7 @@ public final class XposedService {
         }
 
         /**
-         * Callback when the request is failed
+         * Callback when the request is failed.
          *
          * @param packageName Package name of requested app
          * @param message     Error message
@@ -105,27 +105,27 @@ public final class XposedService {
 
     public enum Privilege {
         /**
-         * Unknown privilege value
+         * Unknown privilege value.
          */
         FRAMEWORK_PRIVILEGE_UNKNOWN,
 
         /**
-         * The framework is running as root
+         * The framework is running as root.
          */
         FRAMEWORK_PRIVILEGE_ROOT,
 
         /**
-         * The framework is running in a container with a fake system_server
+         * The framework is running in a container with a fake system_server.
          */
         FRAMEWORK_PRIVILEGE_CONTAINER,
 
         /**
-         * The framework is running as a different app, which may have at most shell permission
+         * The framework is running as a different app, which may have at most shell permission.
          */
         FRAMEWORK_PRIVILEGE_APP,
 
         /**
-         * The framework is embedded in the hooked app, which means {@link #getRemotePreferences} and remote file streams will be null
+         * The framework is embedded in the hooked app, which means {@link #getRemotePreferences} and remote file streams will be null.
          */
         FRAMEWORK_PRIVILEGE_EMBEDDED
     }
@@ -144,7 +144,7 @@ public final class XposedService {
     }
 
     /**
-     * Get the Xposed API version of current implementation
+     * Get the Xposed API version of current implementation.
      *
      * @return API version
      * @throws ServiceException If the service is dead or error occurred
@@ -158,7 +158,7 @@ public final class XposedService {
     }
 
     /**
-     * Get the Xposed framework name of current implementation
+     * Get the Xposed framework name of current implementation.
      *
      * @return Framework name
      * @throws ServiceException If the service is dead or error occurred
@@ -173,7 +173,7 @@ public final class XposedService {
     }
 
     /**
-     * Get the Xposed framework version of current implementation
+     * Get the Xposed framework version of current implementation.
      *
      * @return Framework version
      * @throws ServiceException If the service is dead or error occurred
@@ -188,7 +188,7 @@ public final class XposedService {
     }
 
     /**
-     * Get the Xposed framework version code of current implementation
+     * Get the Xposed framework version code of current implementation.
      *
      * @return Framework version code
      * @throws ServiceException If the service is dead or error occurred
@@ -202,7 +202,7 @@ public final class XposedService {
     }
 
     /**
-     * Get the Xposed framework privilege of current implementation
+     * Get the Xposed framework privilege of current implementation.
      *
      * @return Framework privilege
      * @throws ServiceException If the service is dead or error occurred
@@ -218,7 +218,7 @@ public final class XposedService {
     }
 
     /**
-     * Additional methods provided by specific Xposed framework
+     * Additional methods provided by specific Xposed framework.
      *
      * @param name Featured method name
      * @param args Featured method arguments
@@ -230,7 +230,7 @@ public final class XposedService {
      */
     @Deprecated
     @Nullable
-    public Bundle featuredMethod(@NonNull String name, @Nullable Bundle args) throws UnsupportedOperationException {
+    public Bundle featuredMethod(@NonNull String name, @Nullable Bundle args) {
         try {
             return mService.featuredMethod(name, args);
         } catch (RemoteException e) {
@@ -239,7 +239,7 @@ public final class XposedService {
     }
 
     /**
-     * Get the application scope of current module
+     * Get the application scope of current module.
      *
      * @return Module scope
      * @throws ServiceException If the service is dead or error occurred
@@ -254,7 +254,7 @@ public final class XposedService {
     }
 
     /**
-     * Request to add a new app to the module scope
+     * Request to add a new app to the module scope.
      *
      * @param packageName Package name of the app to be added
      * @param callback    Callback to be invoked when the request is completed or error occurred
@@ -269,7 +269,7 @@ public final class XposedService {
     }
 
     /**
-     * Remove an app from the module scope
+     * Remove an app from the module scope.
      *
      * @param packageName Package name of the app to be added
      * @return null if successful, or non-null with error message
@@ -285,7 +285,7 @@ public final class XposedService {
     }
 
     /**
-     * Get remote preferences from Xposed framework
+     * Get remote preferences from Xposed framework.
      *
      * @param group Group name
      * @return The preferences, null if the framework is embedded
@@ -303,7 +303,7 @@ public final class XposedService {
     }
 
     /**
-     * Delete a group of remote preferences
+     * Delete a group of remote preferences.
      *
      * @param group Group name
      * @throws ServiceException If the service is dead or error occurred
@@ -324,7 +324,7 @@ public final class XposedService {
     }
 
     /**
-     * Open an InputStream to read a file from the module's shared data directory
+     * Open an InputStream to read a file from the module's shared data directory.
      *
      * @param name File name
      * @return The InputStream, null if the framework is embedded
@@ -342,7 +342,7 @@ public final class XposedService {
     }
 
     /**
-     * Open an OutputStream to write a file to the module's shared data directory
+     * Open an OutputStream to write a file to the module's shared data directory.
      *
      * @param name File name
      * @param mode Operating mode
@@ -361,7 +361,7 @@ public final class XposedService {
     }
 
     /**
-     * Delete a file in the module's shared data directory
+     * Delete a file in the module's shared data directory.
      *
      * @param name File name
      * @return true if successful, false if failed or the framework is embedded
@@ -376,7 +376,7 @@ public final class XposedService {
     }
 
     /**
-     * List all files in the module's shared data directory
+     * List all files in the module's shared data directory.
      *
      * @return The file list, null if the framework is embedded
      * @throws ServiceException If the service is dead or error occurred

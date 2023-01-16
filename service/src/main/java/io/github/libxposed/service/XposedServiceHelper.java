@@ -11,24 +11,27 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public final class XposedServiceHelper {
 
-    public interface ServiceListener {
+    /**
+     * Callback interface for Xposed service.
+     */
+    public interface OnServiceListener {
         /**
-         * Callback when the service is connected<br/>
-         * This method could be called multiple times if multiple Xposed frameworks exist
+         * Callback when the service is connected.<br/>
+         * This method could be called multiple times if multiple Xposed frameworks exist.
          *
          * @param service Service instance
          */
         void onServiceBind(@NonNull XposedService service);
 
         /**
-         * Callback when the service is dead
+         * Callback when the service is dead.
          */
         void onServiceDied(@NonNull XposedService service);
     }
 
     private static final String TAG = "XposedServiceHelper";
     private static final Set<XposedService> mCache = new HashSet<>();
-    private static ServiceListener mListener = null;
+    private static OnServiceListener mListener = null;
 
     static void onBinderReceived(IBinder binder) {
         if (binder == null) return;
@@ -48,12 +51,12 @@ public final class XposedServiceHelper {
     }
 
     /**
-     * Register a ServiceListener to receive service binders from Xposed frameworks<br/>
-     * This method should only be called once
+     * Register a ServiceListener to receive service binders from Xposed frameworks.<br/>
+     * This method should only be called once.
      *
      * @param listener Listener to register
      */
-    public static void registerListener(ServiceListener listener) {
+    public static void registerListener(OnServiceListener listener) {
         synchronized (mCache) {
             mListener = listener;
             if (!mCache.isEmpty()) {
