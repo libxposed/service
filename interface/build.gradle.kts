@@ -35,11 +35,11 @@ android {
 publishing {
     publications {
         register<MavenPublication>("interface") {
-            artifactId = "service-interface"
+            artifactId = "interface"
             group = "io.github.libxposed"
             version = "100"
             pom {
-                name.set("service-interface")
+                name.set("interface")
                 description.set("Modern Xposed Service Interface")
                 url.set("https://github.com/libxposed/service")
                 licenses {
