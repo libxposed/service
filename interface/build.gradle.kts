@@ -11,17 +11,17 @@ android {
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
     }
 
     buildFeatures {
         buildConfig = false
         resValues = false
+        aidl = true
     }
 
     compileOptions {
-        targetCompatibility = JavaVersion.VERSION_1_7
-        sourceCompatibility = JavaVersion.VERSION_1_7
+        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
     }
 
     publishing {
