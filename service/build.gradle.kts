@@ -18,12 +18,6 @@ android {
         resValues = false
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-        }
-    }
-
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
