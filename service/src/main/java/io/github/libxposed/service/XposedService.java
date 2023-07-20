@@ -219,27 +219,6 @@ public final class XposedService {
     }
 
     /**
-     * Additional methods provided by specific Xposed framework.
-     *
-     * @param name Featured method name
-     * @param args Featured method arguments
-     * @return Featured method result
-     * @throws UnsupportedOperationException If the framework does not provide a method with given name
-     * @throws ServiceException              If the service is dead or error occurred
-     * @deprecated Normally, modules should never rely on implementation details about the Xposed framework,
-     * but if really necessary, this method can be used to acquire such information
-     */
-    @Deprecated
-    @Nullable
-    public Bundle featuredMethod(@NonNull String name, @Nullable Bundle args) {
-        try {
-            return mService.featuredMethod(name, args);
-        } catch (RemoteException e) {
-            throw new ServiceException(e);
-        }
-    }
-
-    /**
      * Get the application scope of current module.
      *
      * @return Module scope

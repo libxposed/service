@@ -18,7 +18,6 @@ interface IXposedService {
     String getFrameworkVersion() = 3;
     long getFrameworkVersionCode() = 4;
     int getFrameworkPrivilege() = 5;
-    Bundle featuredMethod(String name, in Bundle args) = 6;
 
     // scope utilities
     List<String> getScope() = 10;
