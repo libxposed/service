@@ -6,11 +6,11 @@ plugins {
 
 android {
     namespace = "io.github.libxposed.service"
-    compileSdk = 33
-    buildToolsVersion = "33.0.1"
+    compileSdk = 34
+    buildToolsVersion = "34.0.0"
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 24
     }
 
     buildFeatures {
@@ -20,8 +20,8 @@ android {
     }
 
     compileOptions {
-        targetCompatibility = JavaVersion.VERSION_1_8
-        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
     }
 
     publishing {
