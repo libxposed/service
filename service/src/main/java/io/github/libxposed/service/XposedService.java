@@ -1,23 +1,19 @@
 package io.github.libxposed.service;
 
-import static android.os.ParcelFileDescriptor.MODE_READ_ONLY;
-
 import android.content.SharedPreferences;
+import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-@SuppressWarnings({"resource", "unused"})
+@SuppressWarnings("unused")
 public final class XposedService {
 
     public final static class ServiceException extends RuntimeException {
@@ -272,7 +268,7 @@ public final class XposedService {
      *
      * @param group Group name
      * @return The preferences
-     * @throws ServiceException If the service is dead or an error occurred
+     * @throws ServiceException              If the service is dead or an error occurred
      * @throws UnsupportedOperationException If the framework is embedded
      */
     @NonNull
@@ -297,7 +293,7 @@ public final class XposedService {
      * Delete a group of remote preferences.
      *
      * @param group Group name
-     * @throws ServiceException If the service is dead or an error occurred
+     * @throws ServiceException              If the service is dead or an error occurred
      * @throws UnsupportedOperationException If the framework is embedded
      */
     public void deleteRemotePreferences(@NonNull String group) {
@@ -319,73 +315,10 @@ public final class XposedService {
     }
 
     /**
-     * Open an InputStream to read a file from the module's shared data directory.
-     *
-     * @param name File name, must not contain path separators and . or ..
-     * @return The InputStream
-     * @throws FileNotFoundException If the file does not exist or the path is forbidden
-     * @throws UnsupportedOperationException If the framework is embedded
-     */
-    @NonNull
-    public FileInputStream openRemoteFileInput(@NonNull String name) throws FileNotFoundException {
-        try {
-            var file = mService.openRemoteFile(name, MODE_READ_ONLY);
-            if (file == null) throw new FileNotFoundException();
-            return new FileInputStream(file.getFileDescriptor());
-        } catch (RemoteException e) {
-            if (e.getCause() instanceof UnsupportedOperationException cause) {
-                throw cause;
-            }
-            throw new FileNotFoundException(e.getMessage());
-        }
-    }
-
-    /**
-     * Open an OutputStream to write a file to the module's shared data directory.
-     *
-     * @param name File name, must not contain path separators and . or ..
-     * @param mode Operating mode
-     * @return The OutputStream
-     * @throws FileNotFoundException If the path is forbidden
-     * @throws UnsupportedOperationException If the framework is embedded
-     */
-    @NonNull
-    public FileOutputStream openRemoteFileOutput(@NonNull String name, int mode) throws FileNotFoundException {
-        try {
-            var file = mService.openRemoteFile(name, mode);
-            if (file == null) throw new FileNotFoundException();
-            return new FileOutputStream(file.getFileDescriptor());
-        } catch (RemoteException e) {
-            if (e.getCause() instanceof UnsupportedOperationException cause) {
-                throw cause;
-            }
-            throw new FileNotFoundException(e.getMessage());
-        }
-    }
-
-    /**
-     * Delete a file in the module's shared data directory.
-     *
-     * @param name File name, must not contain path separators and . or ..
-     * @return true if successful, false if the file does not exist
-     * @throws FileNotFoundException If the path is forbidden or remote file is not supported by the framework
-     * @throws UnsupportedOperationException If the framework is embedded
-     */
-    public boolean deleteRemoteFile(@NonNull String name) throws FileNotFoundException {
-        try {
-            return mService.deleteRemoteFile(name);
-        } catch (RemoteException e) {
-            if (e.getCause() instanceof UnsupportedOperationException cause) {
-                throw cause;
-            }
-            throw new FileNotFoundException(e.getMessage());
-        }
-    }
-
-    /**
      * List all files in the module's shared data directory.
      *
      * @return The file list
+     * @throws ServiceException              If the service is dead or an error occurred
      * @throws UnsupportedOperationException If the framework is embedded
      */
     @NonNull
@@ -394,6 +327,47 @@ public final class XposedService {
             var files = mService.listRemoteFiles();
             if (files == null) throw new ServiceException("Framework returns null");
             return files;
+        } catch (RemoteException e) {
+            if (e.getCause() instanceof UnsupportedOperationException cause) {
+                throw cause;
+            }
+            throw new ServiceException(e);
+        }
+    }
+
+    /**
+     * Open a file in the module's shared data directory. The file will be created if not exists.
+     *
+     * @param name File name, must not contain path separators and . or ..
+     * @return The file descriptor
+     * @throws ServiceException              If the service is dead or an error occurred
+     * @throws UnsupportedOperationException If the framework is embedded
+     */
+    @NonNull
+    public ParcelFileDescriptor openRemoteFile(@NonNull String name) {
+        try {
+            var file = mService.openRemoteFile(name);
+            if (file == null) throw new ServiceException("Framework returns null");
+            return file;
+        } catch (RemoteException e) {
+            if (e.getCause() instanceof UnsupportedOperationException cause) {
+                throw cause;
+            }
+            throw new ServiceException(e);
+        }
+    }
+
+    /**
+     * Delete a file in the module's shared data directory.
+     *
+     * @param name File name, must not contain path separators and . or ..
+     * @return true if successful, false if the file does not exist
+     * @throws ServiceException              If the service is dead or an error occurred
+     * @throws UnsupportedOperationException If the framework is embedded
+     */
+    public boolean deleteRemoteFile(@NonNull String name) {
+        try {
+            return mService.deleteRemoteFile(name);
         } catch (RemoteException e) {
             if (e.getCause() instanceof UnsupportedOperationException cause) {
                 throw cause;

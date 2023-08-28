@@ -30,7 +30,7 @@ interface IXposedService {
     void deleteRemotePreferences(String group) = 22;
 
     // remote file utilities
-    ParcelFileDescriptor openRemoteFile(String path, int mode) = 30;
-    boolean deleteRemoteFile(String path) = 31;
-    String[] listRemoteFiles() = 32;
+    String[] listRemoteFiles() = 30;
+    ParcelFileDescriptor openRemoteFile(String name) = 31;
+    boolean deleteRemoteFile(String name) = 32;
 }
