@@ -1,4 +1,5 @@
 package io.github.libxposed.service;
+import io.github.libxposed.service.HookedProcess;
 import io.github.libxposed.service.IXposedScopeCallback;
 
 interface IXposedService {
@@ -23,6 +24,7 @@ interface IXposedService {
     List<String> getScope() = 10;
     oneway void requestScope(String packageName, IXposedScopeCallback callback) = 11;
     String removeScope(String packageName) = 12;
+    List<HookedProcess> getRunningTargets() = 13;
 
     // remote preference utilities
     Bundle requestRemotePreferences(String group) = 20;

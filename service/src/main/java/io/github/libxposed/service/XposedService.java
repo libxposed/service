@@ -263,6 +263,15 @@ public final class XposedService {
         }
     }
 
+    @NonNull
+    public List<HookedProcess> getRunningTargets() {
+        try {
+            return mService.getRunningTargets();
+        } catch (RemoteException e) {
+            throw new ServiceException(e);
+        }
+    }
+
     /**
      * Get remote preferences from Xposed framework. If the group does not exist, it will be created.
      *
