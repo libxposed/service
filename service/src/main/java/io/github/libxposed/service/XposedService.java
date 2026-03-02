@@ -15,6 +15,18 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @SuppressWarnings("unused")
 public final class XposedService {
+    /**
+     * The framework has the capability to hook system_server and other system processes.
+     */
+    public static final long CAP_SYSTEM = 1L;
+    /**
+     * The framework provides remote preferences and remote files support.
+     */
+    public static final long CAP_REMOTE = 1L << 1;
+    /**
+     * The framework allows dynamically loaded code to use Xposed APIs.
+     */
+    public static final long CAP_RT_DYNAMIC_CODE_API_ACCESS = 1L << 2;
 
     public final static class ServiceException extends RuntimeException {
         ServiceException(String message) {
@@ -103,33 +115,6 @@ public final class XposedService {
         }
     }
 
-    public enum Privilege {
-        /**
-         * Unknown privilege value.
-         */
-        FRAMEWORK_PRIVILEGE_UNKNOWN,
-
-        /**
-         * The framework is running as root.
-         */
-        FRAMEWORK_PRIVILEGE_ROOT,
-
-        /**
-         * The framework is running in a container with a fake system_server.
-         */
-        FRAMEWORK_PRIVILEGE_CONTAINER,
-
-        /**
-         * The framework is running as a different app, which may have at most shell permission.
-         */
-        FRAMEWORK_PRIVILEGE_APP,
-
-        /**
-         * The framework is embedded in the hooked app, which means {@link #getRemotePreferences} will be null and remote file is unsupported.
-         */
-        FRAMEWORK_PRIVILEGE_EMBEDDED
-    }
-
     private final IXposedService mService;
     private final Map<String, RemotePreferences> mRemotePrefs = new HashMap<>();
 
@@ -202,16 +187,15 @@ public final class XposedService {
     }
 
     /**
-     * Get the Xposed framework privilege of current implementation.
+     * Gets the Xposed framework capabilities.
+     * Capabilities with prefix CAP_RT_ may change among launches.
      *
-     * @return Framework privilege
+     * @return Framework capabilities
      * @throws ServiceException If the service is dead or an error occurred
      */
-    @NonNull
-    public Privilege getFrameworkPrivilege() {
+    public int getFrameworkCapabilities() {
         try {
-            int value = mService.getFrameworkPrivilege();
-            return (value >= 0 && value <= 3) ? Privilege.values()[value + 1] : Privilege.FRAMEWORK_PRIVILEGE_UNKNOWN;
+            return mService.getFrameworkCapabilities();
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }

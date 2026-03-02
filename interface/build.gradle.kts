@@ -5,12 +5,12 @@ plugins {
 }
 
 android {
-    namespace = "io.github.libxposed.service"
+    namespace = "io.github.libxposed.service.interfaces"
     compileSdk = 36
     buildToolsVersion = "36.1.0"
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
     }
 
     buildFeatures {
@@ -37,7 +37,7 @@ publishing {
         register<MavenPublication>("interface") {
             artifactId = "interface"
             group = "io.github.libxposed"
-            version = "100"
+            version = "101.0.0"
             pom {
                 name.set("interface")
                 description.set("Modern Xposed Service Interface")

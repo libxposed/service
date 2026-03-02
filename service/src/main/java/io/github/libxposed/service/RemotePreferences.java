@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.WeakHashMap;
@@ -49,7 +50,7 @@ public final class RemotePreferences implements SharedPreferences {
         if (output == null) return null;
         var prefs = new RemotePreferences(service, group);
         if (output.containsKey("map")) {
-            prefs.mMap.putAll((Map<String, Object>) output.getSerializable("map"));
+            prefs.mMap.putAll((Map<String, Object>) Objects.requireNonNull(output.getSerializable("map")));
         }
         return prefs;
     }
