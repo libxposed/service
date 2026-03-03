@@ -6,12 +6,31 @@ interface IXposedService {
     const String AUTHORITY_SUFFIX = ".XposedService";
     const String SEND_BINDER = "SendBinder";
 
+    /**
+     * The API version of this <b>library</b>. This is a static value for the framework.
+     * Modules should use {@link #getApiVersion()} to check the API version at runtime.
+     */
+    const int LIB_API = 101;
+
+    /**
+     * The framework has the capability to hook system_server and other system processes.
+     */
+    const long CAP_SYSTEM = 1L;
+    /**
+     * The framework provides remote preferences and remote files support.
+     */
+    const long CAP_REMOTE = 1L << 1;
+    /**
+     * The framework allows dynamically loaded code to use Xposed APIs.
+     */
+    const long CAP_RT_DYNAMIC_CODE_API_ACCESS = 1L << 2;
+
     // framework details
-    int getAPIVersion() = 1;
+    int getApiVersion() = 1;
     String getFrameworkName() = 2;
     String getFrameworkVersion() = 3;
     long getFrameworkVersionCode() = 4;
-    int getFrameworkCapabilities() = 5;
+    long getFrameworkCapabilities() = 5;
 
     // scope utilities
     List<String> getScope() = 10;

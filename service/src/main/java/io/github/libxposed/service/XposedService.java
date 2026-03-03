@@ -15,19 +15,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @SuppressWarnings("unused")
 public final class XposedService {
-    /**
-     * The framework has the capability to hook system_server and other system processes.
-     */
-    public static final long CAP_SYSTEM = 1L;
-    /**
-     * The framework provides remote preferences and remote files support.
-     */
-    public static final long CAP_REMOTE = 1L << 1;
-    /**
-     * The framework allows dynamically loaded code to use Xposed APIs.
-     */
-    public static final long CAP_RT_DYNAMIC_CODE_API_ACCESS = 1L << 2;
-
     public final static class ServiceException extends RuntimeException {
         ServiceException(String message) {
             super(message);
@@ -134,9 +121,9 @@ public final class XposedService {
      * @return API version
      * @throws ServiceException If the service is dead or an error occurred
      */
-    public int getAPIVersion() {
+    public int getApiVersion() {
         try {
-            return mService.getAPIVersion();
+            return mService.getApiVersion();
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }
@@ -193,7 +180,7 @@ public final class XposedService {
      * @return Framework capabilities
      * @throws ServiceException If the service is dead or an error occurred
      */
-    public int getFrameworkCapabilities() {
+    public long getFrameworkCapabilities() {
         try {
             return mService.getFrameworkCapabilities();
         } catch (RemoteException e) {
