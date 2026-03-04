@@ -34,8 +34,8 @@ interface IXposedService {
 
     // scope utilities
     List<String> getScope() = 10;
-    oneway void requestScope(String packageName, IXposedScopeCallback callback) = 11;
-    String removeScope(String packageName) = 12;
+    oneway void requestScope(in List<String> packages, IXposedScopeCallback callback) = 11;
+    void removeScope(in List<String> packages) = 12;
     List<HookedProcess> getRunningTargets() = 13;
 
     // remote preference utilities

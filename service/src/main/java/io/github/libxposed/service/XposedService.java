@@ -5,7 +5,6 @@ import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,71 +31,31 @@ public final class XposedService {
      */
     public interface OnScopeEventListener {
         /**
-         * Callback when the request notification / window prompted.
-         *
-         * @param packageName Package name of requested app
-         */
-        default void onScopeRequestPrompted(String packageName) {
-        }
-
-        /**
          * Callback when the request is approved.
          *
-         * @param packageName Package name of requested app
+         * @param approved Approved packages for the request
          */
-        default void onScopeRequestApproved(String packageName) {
-        }
-
-        /**
-         * Callback when the request is denied.
-         *
-         * @param packageName Package name of requested app
-         */
-        default void onScopeRequestDenied(String packageName) {
-        }
-
-        /**
-         * Callback when the request is timeout or revoked.
-         *
-         * @param packageName Package name of requested app
-         */
-        default void onScopeRequestTimeout(String packageName) {
+        default void onScopeRequestApproved(List<String> approved) {
         }
 
         /**
          * Callback when the request is failed.
          *
-         * @param packageName Package name of requested app
-         * @param message     Error message
+         * @param message Error message
          */
-        default void onScopeRequestFailed(String packageName, String message) {
+        default void onScopeRequestFailed(String message) {
         }
 
         private IXposedScopeCallback asInterface() {
             return scopeCallbacks.computeIfAbsent(this, (listener) -> new IXposedScopeCallback.Stub() {
                 @Override
-                public void onScopeRequestPrompted(String packageName) {
-                    listener.onScopeRequestPrompted(packageName);
+                public void onScopeRequestApproved(List<String> approved) {
+                    listener.onScopeRequestApproved(approved);
                 }
 
                 @Override
-                public void onScopeRequestApproved(String packageName) {
-                    listener.onScopeRequestApproved(packageName);
-                }
-
-                @Override
-                public void onScopeRequestDenied(String packageName) {
-                    listener.onScopeRequestDenied(packageName);
-                }
-
-                @Override
-                public void onScopeRequestTimeout(String packageName) {
-                    listener.onScopeRequestTimeout(packageName);
-                }
-
-                @Override
-                public void onScopeRequestFailed(String packageName, String message) {
-                    listener.onScopeRequestFailed(packageName, message);
+                public void onScopeRequestFailed(String message) {
+                    listener.onScopeRequestFailed(message);
                 }
             });
         }
@@ -206,13 +165,13 @@ public final class XposedService {
     /**
      * Request to add a new app to the module scope.
      *
-     * @param packageName Package name of the app to be added
-     * @param callback    Callback to be invoked when the request is completed or error occurred
+     * @param packages Packages to be added
+     * @param callback Callback to be invoked when the request is completed or error occurred
      * @throws ServiceException If the service is dead or an error occurred
      */
-    public void requestScope(@NonNull String packageName, @NonNull OnScopeEventListener callback) {
+    public void requestScope(@NonNull List<String> packages, @NonNull OnScopeEventListener callback) {
         try {
-            mService.requestScope(packageName, callback.asInterface());
+            mService.requestScope(packages, callback.asInterface());
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }
@@ -221,14 +180,12 @@ public final class XposedService {
     /**
      * Remove an app from the module scope.
      *
-     * @param packageName Package name of the app to be added
-     * @return null if successful, or non-null with error message
+     * @param packages Packages to be removed
      * @throws ServiceException If the service is dead or an error occurred
      */
-    @Nullable
-    public String removeScope(@NonNull String packageName) {
+    public void removeScope(@NonNull List<String> packages) {
         try {
-            return mService.removeScope(packageName);
+            mService.removeScope(packages);
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }
