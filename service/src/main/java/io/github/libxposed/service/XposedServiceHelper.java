@@ -63,7 +63,7 @@ public final class XposedServiceHelper {
                 for (var it = mCache.iterator(); it.hasNext(); ) {
                     try {
                         var service = it.next();
-                        service.getRaw().asBinder().linkToDeath(() -> mListener.onServiceDied(service), 0);
+                        service.asInterface().asBinder().linkToDeath(() -> mListener.onServiceDied(service), 0);
                         mListener.onServiceBind(service);
                     } catch (Throwable t) {
                         Log.e(TAG, "registerListener", t);

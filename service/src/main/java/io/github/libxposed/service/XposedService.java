@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @SuppressWarnings("unused")
@@ -24,7 +23,7 @@ public final class XposedService {
         }
     }
 
-    private final static Map<OnScopeEventListener, IXposedScopeCallback> scopeCallbacks = new WeakHashMap<>();
+    private final static Map<OnScopeEventListener, IXposedScopeCallback> scopeCallbacks = new HashMap<>();
 
     /**
      * Callback interface for module scope request.
@@ -51,11 +50,13 @@ public final class XposedService {
                 @Override
                 public void onScopeRequestApproved(List<String> approved) {
                     listener.onScopeRequestApproved(approved);
+                    scopeCallbacks.remove(listener);
                 }
 
                 @Override
                 public void onScopeRequestFailed(String message) {
                     listener.onScopeRequestFailed(message);
+                    scopeCallbacks.remove(listener);
                 }
             });
         }
@@ -70,7 +71,7 @@ public final class XposedService {
         mService = service;
     }
 
-    IXposedService getRaw() {
+    IXposedService asInterface() {
         return mService;
     }
 
