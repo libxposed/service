@@ -134,15 +134,15 @@ public final class XposedService {
     }
 
     /**
-     * Gets the Xposed framework capabilities.
-     * Capabilities with prefix CAP_RT_ may change among launches.
+     * Gets the Xposed framework properties.
+     * Properties with prefix PROP_RT_ may change among launches.
      *
-     * @return Framework capabilities
+     * @return Framework properties
      * @throws ServiceException If the service is dead or an error occurred
      */
-    public long getFrameworkCapabilities() {
+    public long getFrameworkProperties() {
         try {
-            return mService.getFrameworkCapabilities();
+            return mService.getFrameworkProperties();
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }

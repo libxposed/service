@@ -15,22 +15,22 @@ interface IXposedService {
     /**
      * The framework has the capability to hook system_server and other system processes.
      */
-    const long CAP_SYSTEM = 1L;
+    const long PROP_CAP_SYSTEM = 1L;
     /**
      * The framework provides remote preferences and remote files support.
      */
-    const long CAP_REMOTE = 1L << 1;
+    const long PROP_CAP_REMOTE = 1L << 1;
     /**
-     * The framework allows dynamically loaded code to use Xposed APIs.
+     * The framework disallows accessing Xposed API via reflection or dynamically loaded code.
      */
-    const long CAP_RT_DYNAMIC_CODE_API_ACCESS = 1L << 2;
+    const long PROP_RT_API_PROTECTION = 1L << 2;
 
     // framework details
     int getApiVersion() = 1;
     String getFrameworkName() = 2;
     String getFrameworkVersion() = 3;
     long getFrameworkVersionCode() = 4;
-    long getFrameworkCapabilities() = 5;
+    long getFrameworkProperties() = 5;
 
     // scope utilities
     List<String> getScope() = 10;
