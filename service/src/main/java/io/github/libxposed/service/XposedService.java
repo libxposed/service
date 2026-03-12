@@ -34,7 +34,7 @@ public final class XposedService {
          *
          * @param approved Approved packages for the request
          */
-        default void onScopeRequestApproved(List<String> approved) {
+        default void onScopeRequestApproved(@NonNull List<String> approved) {
         }
 
         /**
@@ -42,7 +42,7 @@ public final class XposedService {
          *
          * @param message Error message
          */
-        default void onScopeRequestFailed(String message) {
+        default void onScopeRequestFailed(@NonNull String message) {
         }
 
         private IXposedScopeCallback asInterface() {
