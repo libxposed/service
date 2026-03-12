@@ -192,21 +192,16 @@ public final class XposedService {
         }
     }
 
-    /**
-     * Get a list of currently running processes that are hooked by the module. Note that one app may
-     * have multiple processes, and you should use uid instead of processName to identify apps.
-     *
-     * @return The list of hooked processes
-     * @throws ServiceException If the service is dead or an error occurred
-     */
-    @NonNull
-    public List<HookedProcess> getRunningTargets() {
-        try {
-            return mService.getRunningTargets();
-        } catch (RemoteException e) {
-            throw new ServiceException(e);
-        }
-    }
+//    api 102 roadmap
+//    /**
+//     * Get a list of currently running processes that are hooked by the module. Note that one app may
+//     * have multiple processes, and you should use uid instead of processName to identify apps.
+//     *
+//     * @return The list of hooked processes
+//     * @throws ServiceException If the service is dead or an error occurred
+//     */
+//    @NonNull
+//    public List<HookedProcess> getRunningTargets()
 
     /**
      * Get remote preferences from Xposed framework. If the group does not exist, it will be created.
