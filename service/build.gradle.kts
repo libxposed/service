@@ -32,7 +32,7 @@ android {
 }
 
 dependencies {
-    api(project(":interface"))
+    implementation(project(":interface"))
     compileOnly(libs.annotation)
 }
 

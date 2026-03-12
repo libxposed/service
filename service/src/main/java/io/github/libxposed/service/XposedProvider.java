@@ -4,6 +4,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -11,13 +12,19 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Objects;
+
 public final class XposedProvider extends ContentProvider {
 
     private static final String TAG = "XposedProvider";
 
     @Override
     public boolean onCreate() {
-        return false;
+        var targetSdk = Objects.requireNonNull(getContext()).getApplicationInfo().targetSdkVersion;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && targetSdk >= Build.VERSION_CODES.R) {
+            RemotePreferences.shouldNotifyCleared = true;
+        }
+        return true;
     }
 
     @Nullable

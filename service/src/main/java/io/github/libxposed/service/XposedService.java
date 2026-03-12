@@ -9,11 +9,26 @@ import androidx.annotation.NonNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
 public final class XposedService {
-    public final static class ServiceException extends RuntimeException {
+    /**
+     * The framework has the capability to hook system_server and other system processes.
+     */
+    public static final long PROP_CAP_SYSTEM = IXposedService.PROP_CAP_SYSTEM;
+
+    /**
+     * The framework provides remote preferences and remote files support.
+     */
+    public static final long PROP_CAP_REMOTE = IXposedService.PROP_CAP_REMOTE;
+
+    /**
+     * The framework disallows accessing Xposed API via reflection or dynamically loaded code.
+     */
+    public static final long PROP_RT_API_PROTECTION = IXposedService.PROP_RT_API_PROTECTION;
+
+    public static final class ServiceException extends RuntimeException {
         ServiceException(String message) {
             super(message);
         }
@@ -23,7 +38,7 @@ public final class XposedService {
         }
     }
 
-    private final static Map<OnScopeEventListener, IXposedScopeCallback> scopeCallbacks = new HashMap<>();
+    private static final Map<OnScopeEventListener, IXposedScopeCallback> scopeCallbacks = new ConcurrentHashMap<>();
 
     /**
      * Callback interface for module scope request.
@@ -64,8 +79,6 @@ public final class XposedService {
 
     private final IXposedService mService;
     private final Map<String, RemotePreferences> mRemotePrefs = new HashMap<>();
-
-    final ReentrantReadWriteLock deletionLock = new ReentrantReadWriteLock();
 
     XposedService(IXposedService service) {
         mService = service;
@@ -209,17 +222,13 @@ public final class XposedService {
      * @param group Group name
      * @return The preferences
      * @throws ServiceException              If the service is dead or an error occurred
-     * @throws UnsupportedOperationException If the framework is embedded
+     * @throws UnsupportedOperationException If the framework does not have remote capability
      */
     @NonNull
-    public SharedPreferences getRemotePreferences(@NonNull String group) {
+    public synchronized SharedPreferences getRemotePreferences(@NonNull String group) {
         return mRemotePrefs.computeIfAbsent(group, k -> {
             try {
-                var instance = RemotePreferences.newInstance(this, k);
-                if (instance == null) {
-                    throw new ServiceException("Framework returns null");
-                }
-                return instance;
+                return RemotePreferences.newInstance(this, k);
             } catch (RemoteException e) {
                 if (e.getCause() instanceof UnsupportedOperationException cause) {
                     throw cause;
@@ -234,23 +243,18 @@ public final class XposedService {
      *
      * @param group Group name
      * @throws ServiceException              If the service is dead or an error occurred
-     * @throws UnsupportedOperationException If the framework is embedded
+     * @throws UnsupportedOperationException If the framework does not have remote capability
      */
-    public void deleteRemotePreferences(@NonNull String group) {
-        deletionLock.writeLock().lock();
+    public synchronized void deleteRemotePreferences(@NonNull String group) {
         try {
+            var prefs = mRemotePrefs.get(group);
+            if (prefs != null) prefs.onDelete();
             mService.deleteRemotePreferences(group);
-            mRemotePrefs.computeIfPresent(group, (k, v) -> {
-                v.setDeleted();
-                return null;
-            });
         } catch (RemoteException e) {
             if (e.getCause() instanceof UnsupportedOperationException cause) {
                 throw cause;
             }
             throw new ServiceException(e);
-        } finally {
-            deletionLock.writeLock().unlock();
         }
     }
 
@@ -259,7 +263,7 @@ public final class XposedService {
      *
      * @return The file list
      * @throws ServiceException              If the service is dead or an error occurred
-     * @throws UnsupportedOperationException If the framework is embedded
+     * @throws UnsupportedOperationException If the framework does not have remote capability
      */
     @NonNull
     public String[] listRemoteFiles() {
@@ -281,7 +285,7 @@ public final class XposedService {
      * @param name File name, must not contain path separators and . or ..
      * @return The file descriptor
      * @throws ServiceException              If the service is dead or an error occurred
-     * @throws UnsupportedOperationException If the framework is embedded
+     * @throws UnsupportedOperationException If the framework does not have remote capability
      */
     @NonNull
     public ParcelFileDescriptor openRemoteFile(@NonNull String name) {
@@ -303,7 +307,7 @@ public final class XposedService {
      * @param name File name, must not contain path separators and . or ..
      * @return true if successful, false if the file does not exist
      * @throws ServiceException              If the service is dead or an error occurred
-     * @throws UnsupportedOperationException If the framework is embedded
+     * @throws UnsupportedOperationException If the framework does not have remote capability
      */
     public boolean deleteRemoteFile(@NonNull String name) {
         try {
