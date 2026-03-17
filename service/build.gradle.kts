@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.agp.lib)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.dokka.javadoc)
     `maven-publish`
     signing
 }
@@ -8,6 +10,7 @@ android {
     namespace = "io.github.libxposed.service"
     compileSdk = 36
     buildToolsVersion = "36.1.0"
+    androidResources.enable = false
 
     defaultConfig {
         minSdk = 26
@@ -15,7 +18,6 @@ android {
 
     buildFeatures {
         buildConfig = false
-        resValues = false
     }
 
     compileOptions {
@@ -26,7 +28,6 @@ android {
     publishing {
         singleVariant("release") {
             withSourcesJar()
-            withJavadocJar()
         }
     }
 }
@@ -36,12 +37,25 @@ dependencies {
     compileOnly(libs.annotation)
 }
 
+dokka {
+    dokkaSourceSets.register("main") {
+        sourceRoots.from(file("src/main/java"))
+    }
+}
+
+val dokkaJavadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+    dependsOn("dokkaGeneratePublicationJavadoc")
+    from(layout.buildDirectory.dir("dokka/javadoc"))
+}
+
 publishing {
     publications {
         register<MavenPublication>("service") {
             artifactId = "service"
             group = "io.github.libxposed"
             version = "101.0.0"
+            artifact(dokkaJavadocJar)
             pom {
                 name.set("service")
                 description.set("Modern Xposed Service Interface")
