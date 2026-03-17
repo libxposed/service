@@ -1,5 +1,6 @@
 # libxposed Service
 
+[![API](https://img.shields.io/badge/API-101-brightgreen)](https://github.com/libxposed/api)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.libxposed/service?color=blue)](https://central.sonatype.com/artifact/io.github.libxposed/service)
 [![Android Min SDK](https://img.shields.io/badge/minSdk-26-orange)](https://developer.android.com/about/versions/oreo)
 [![License](https://img.shields.io/github/license/libxposed/service)](LICENSE)
