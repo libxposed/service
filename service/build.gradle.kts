@@ -35,7 +35,9 @@ android {
 
 dependencies {
     implementation(project(":interface"))
-    compileOnly(libs.annotation)
+    compileOnly(libs.androidx.annotation)
+    compileOnly(libs.libxposed.annotation)
+    lintPublish(libs.libxposed.lint)
 }
 
 dokka {

@@ -1,7 +1,6 @@
 [versions]
-annotation = "1.9.1"
-agp = "9.1.0"
-dokka = "2.1.0"
+agp = "9.1.1"
+dokka = "2.2.0"
 
 [plugins]
 agp-lib = { id = "com.android.library", version.ref = "agp" }
@@ -9,4 +8,6 @@ dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "dokka" }
 
 [libraries]
-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
+androidx-annotation = { module = "androidx.annotation:annotation", version = "1.10.0" }
+libxposed-annotation = { module = "io.github.libxposed:annotations", version = "1.0.0" }
+libxposed-lint = { module = "io.github.libxposed:lint", version = "1.0.0" }
