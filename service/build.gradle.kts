@@ -8,8 +8,8 @@ plugins {
 
 android {
     namespace = "io.github.libxposed.service"
-    compileSdk = 36
-    buildToolsVersion = "36.1.0"
+    compileSdk = 37
+    buildToolsVersion = "37.0.0"
     androidResources.enable = false
     enableKotlin = false
 
@@ -34,7 +34,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":interface"))
+    api(project(":interface"))
     compileOnly(libs.androidx.annotation)
     compileOnly(libs.libxposed.annotation)
     lintPublish(libs.libxposed.lint)
@@ -57,7 +57,7 @@ publishing {
         register<MavenPublication>("service") {
             artifactId = "service"
             group = "io.github.libxposed"
-            version = "101.0.0"
+            version = "102.0.0"
             artifact(dokkaJavadocJar)
             pom {
                 name.set("service")

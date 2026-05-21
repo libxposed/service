@@ -8,8 +8,8 @@ plugins {
 
 android {
     namespace = "io.github.libxposed.service.interfaces"
-    compileSdk = 36
-    buildToolsVersion = "36.1.0"
+    compileSdk = 37
+    buildToolsVersion = "37.0.0"
     androidResources.enable = false
     enableKotlin = false
 
@@ -45,7 +45,7 @@ publishing {
         register<MavenPublication>("interface") {
             artifactId = "interface"
             group = "io.github.libxposed"
-            version = "101.0.0"
+            version = "102.0.0"
             artifact(dokkaJavadocJar)
             pom {
                 name.set("interface")
