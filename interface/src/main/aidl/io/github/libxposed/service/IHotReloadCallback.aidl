@@ -7,5 +7,5 @@ interface IHotReloadCallback {
     /**
      * Called when hot reload completes or fails.
      */
-    void onHotReloadDone(int status, String message) = 1;
+    oneway void onHotReloadDone(int status, String message) = 1;
 }
