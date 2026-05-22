@@ -9,10 +9,23 @@ interface IXposedService {
     const String SEND_BINDER = "SendBinder";
 
     /**
+     * API version 101.
+     */
+    const int API_101 = 101;
+    /**
+     * API version 102.
+     * <p>Behavior changes: Modules targeting 102 or higher</p>
+     * <ul>
+     * <li>Running hooked targets can be queried.</li>
+     * <li>Hot reload can be requested for a hooked target when permitted by the framework.</li>
+     * </ul>
+     */
+    const int API_102 = 102;
+    /**
      * The API version of this <b>library</b>. This is a static value for the framework.
      * Modules should use {@link #getApiVersion()} to check the API version at runtime.
      */
-    const int LIB_API = 102;
+    const int LIB_API = API_102;
 
     /**
      * The framework has the capability to hook system_server and other system processes.

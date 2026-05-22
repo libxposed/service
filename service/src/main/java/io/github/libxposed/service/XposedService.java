@@ -22,7 +22,7 @@ public final class XposedService {
     /**
      * API version 101.
      */
-    public static final int API_101 = 101;
+    public static final int API_101 = IXposedService.API_101;
 
     /**
      * API version 102.
@@ -32,7 +32,7 @@ public final class XposedService {
      * <li>Hot reload can be requested for a hooked target when permitted by the framework.</li>
      * </ul>
      */
-    public static final int API_102 = 102;
+    public static final int API_102 = IXposedService.API_102;
 
     /**
      * The framework has the capability to hook system_server and other system processes.
