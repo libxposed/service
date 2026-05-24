@@ -33,11 +33,18 @@ android {
     }
 }
 
+val libVersion = "102.0.0"
+val publishSnapshot = providers.gradleProperty("publishSnapshot").orNull == "true"
+val dependencySnapshot = providers.gradleProperty("dependencySnapshot").orNull == "true"
+fun String.real(snapshot: Boolean) = if (snapshot) "$this-SNAPSHOT" else this
+val libxposedAnnotation = "io.github.libxposed:annotation:" + libs.versions.libxposed.annotation.get()
+val libxposedLint = "io.github.libxposed:lint:" + libs.versions.libxposed.lint.get()
+
 dependencies {
     api(project(":interface"))
     compileOnly(libs.androidx.annotation)
-    compileOnly(libs.libxposed.annotation)
-    lintPublish(libs.libxposed.lint)
+    compileOnly(libxposedAnnotation.real(dependencySnapshot))
+    lintPublish(libxposedLint.real(dependencySnapshot))
 }
 
 dokka {
@@ -57,7 +64,7 @@ publishing {
         register<MavenPublication>("service") {
             artifactId = "service"
             group = "io.github.libxposed"
-            version = "102.0.0"
+            version = libVersion.real(publishSnapshot)
             artifact(dokkaJavadocJar)
             pom {
                 name.set("service")
@@ -89,6 +96,11 @@ publishing {
         maven {
             name = "ossrh"
             url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
+            credentials(PasswordCredentials::class)
+        }
+        maven {
+            name = "snapshots"
+            url = uri("https://central.sonatype.com/repository/maven-snapshots/")
             credentials(PasswordCredentials::class)
         }
         maven {
