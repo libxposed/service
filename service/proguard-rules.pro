@@ -1,0 +1,1 @@
+-dontwarn io.github.libxposed.annotation.**
