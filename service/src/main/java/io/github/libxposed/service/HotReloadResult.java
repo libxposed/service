@@ -3,11 +3,38 @@ package io.github.libxposed.service;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import io.github.libxposed.annotation.SinceApi;
+
+/**
+ * Result of an asynchronous hot reload request.
+ *
+ * @param status  The completion status
+ * @param message Optional framework-provided diagnostic message
+ */
+@SinceApi(XposedService.API_102)
 public record HotReloadResult(@NonNull Status status, @Nullable String message) {
+    /**
+     * Hot reload completion status.
+     */
     public enum Status {
+        /**
+         * Hot reload completed successfully.
+         */
         SUCCESS,
+
+        /**
+         * Hot reload failed or was refused before completion.
+         */
         FAILED,
+
+        /**
+         * The target is already being hot-reloaded.
+         */
         IN_PROGRESS,
+
+        /**
+         * The target process died before hot reload could complete.
+         */
         PROCESS_DIED
     }
 

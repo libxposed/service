@@ -42,7 +42,7 @@ val libxposedAnnotation = "io.github.libxposed:annotation:" + libs.versions.libx
 val libxposedLint = "io.github.libxposed:lint:" + libs.versions.libxposed.lint.get()
 
 dependencies {
-    api(project(":interface"))
+    implementation(project(":interface"))
     compileOnly(libs.androidx.annotation)
     compileOnly(libxposedAnnotation.real(dependencySnapshot))
     lintPublish(libxposedLint.real(dependencySnapshot))

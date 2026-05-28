@@ -14,53 +14,47 @@ interface IXposedService {
     const int API_101 = 101;
     /**
      * API version 102.
-     * <p>Behavior changes: Modules targeting 102 or higher</p>
-     * <ul>
-     * <li>Running hooked targets can be queried.</li>
-     * <li>Hot reload can be requested for a hooked target when permitted by the framework.</li>
-     * </ul>
      */
     const int API_102 = 102;
     /**
-     * The API version of this <b>library</b>. This is a static value for the framework.
-     * Modules should use {@link #getApiVersion()} to check the API version at runtime.
+     * API version implemented by this interface.
      */
     const int LIB_API = API_102;
 
     /**
-     * The framework has the capability to hook system_server and other system processes.
+     * Framework property bit: system process hooking is supported.
      */
     const long PROP_CAP_SYSTEM = 1L;
     /**
-     * The framework provides remote preferences and remote files support.
+     * Framework property bit: remote preferences and files are supported.
      */
     const long PROP_CAP_REMOTE = 1L << 1;
     /**
-     * The framework disallows accessing Xposed API via reflection or dynamically loaded code.
+     * Framework property bit: runtime API protection is enforced.
      */
     const long PROP_RT_API_PROTECTION = 1L << 2;
     /**
-     * The framework permits hot reloading.
+     * Framework property bit: hot reload is currently permitted.
      */
     const long PROP_RT_HOT_RELOAD = 1L << 3;
 
     /**
-     * Hot reload completed successfully.
+     * Raw hot reload status: success.
      */
     const int HOT_RELOAD_SUCCESS = 0;
 
     /**
-     * Hot reload failed or was refused before completion.
+     * Raw hot reload status: failed.
      */
     const int HOT_RELOAD_FAILED = 1;
 
     /**
-     * The target is already being hot-reloaded.
+     * Raw hot reload status: target already reloading.
      */
     const int HOT_RELOAD_IN_PROGRESS = 2;
 
     /**
-     * The target process died before hot reload could complete.
+     * Raw hot reload status: target process died.
      */
     const int HOT_RELOAD_PROCESS_DIED = 3;
 

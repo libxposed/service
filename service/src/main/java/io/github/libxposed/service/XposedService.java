@@ -8,6 +8,8 @@ import android.os.RemoteException;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +28,7 @@ public final class XposedService {
 
     /**
      * API version 102.
-     * <p>Behavior changes: Modules targeting 102 or higher</p>
+     * <p>API additions:</p>
      * <ul>
      * <li>Running hooked targets can be queried.</li>
      * <li>Hot reload can be requested for a hooked target when permitted by the framework.</li>
@@ -107,6 +109,7 @@ public final class XposedService {
     /**
      * Callback interface for hot reload requests.
      */
+    @SinceApi(API_102)
     public interface HotReloadCallback {
         /**
          * Called when hot reload completes or fails.
@@ -114,11 +117,11 @@ public final class XposedService {
          * This callback may run on a Binder thread. Dispatch to the main thread before touching UI.
          * </p>
          *
-         * @param process The target process passed to
-         *                {@link #hotReloadModule(HookedProcess, Bundle, HotReloadCallback)}
-         * @param result  The hot reload result
+         * @param target The target process passed to
+         *               {@link #hotReloadModule(HookedTarget, Bundle, HotReloadCallback)}
+         * @param result The hot reload result
          */
-        void onHotReloadDone(@NonNull HookedProcess process, @NonNull HotReloadResult result);
+        void onHotReloadResult(@NonNull HookedTarget target, @NonNull HotReloadResult result);
     }
 
     private final IXposedService mService;
@@ -258,11 +261,9 @@ public final class XposedService {
     /**
      * Get a list of currently running processes that are hooked by the module.
      * <p>
-     * Each returned {@link HookedProcess#targetId} is an opaque token assigned by the framework.
-     * Module apps should only pass it back to
-     * {@link #hotReloadModule(HookedProcess, Bundle, HotReloadCallback)} and
-     * must not infer process identity, ordering, or lifetime from it. The pid, uid, process name,
-     * and loaded version code are diagnostic values only.
+     * Returned targets can be passed to
+     * {@link #hotReloadModule(HookedTarget, Bundle, HotReloadCallback)}. The pid, uid, process
+     * name, and loaded version code are diagnostic values only.
      * </p>
      *
      * @return The list of hooked processes
@@ -271,10 +272,17 @@ public final class XposedService {
      */
     @SinceApi(API_102)
     @NonNull
-    public List<HookedProcess> getRunningTargets() {
+    public List<HookedTarget> getRunningTargets() {
         requireApi(API_102);
         try {
-            return mService.getRunningTargets();
+            var processes = mService.getRunningTargets();
+            if (processes == null) throw new ServiceException("Framework returns null");
+            var targets = new ArrayList<HookedTarget>(processes.size());
+            for (var process : processes) {
+                if (process == null) throw new ServiceException("Framework returns null target");
+                targets.add(toHookedTarget(process));
+            }
+            return Collections.unmodifiableList(targets);
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }
@@ -294,22 +302,24 @@ public final class XposedService {
      * {@link java.io.Serializable} objects in this bundle.
      * </p>
      *
-     * @param process  The target process
+     * @param target   The target process
      * @param data     Optional data to be passed to the old module
      * @param callback Callback to be invoked when the request completes or fails
      * @throws ServiceException  If the service is dead or an error occurred
-     * @throws SecurityException If the target id is invalid, no longer belongs to this module, or
-     *                           hot reload is denied by framework policy
+     * @throws SecurityException If the target is invalid, no longer belongs to this module, or hot
+     *                           reload is denied by framework policy
      */
     @SinceApi(API_102)
-    public void hotReloadModule(@NonNull HookedProcess process, @Nullable Bundle data,
+    public void hotReloadModule(@NonNull HookedTarget target, @Nullable Bundle data,
                                 @NonNull HotReloadCallback callback) {
         requireApi(API_102);
+        Objects.requireNonNull(target);
+        Objects.requireNonNull(callback);
         var remoteCallback = new IHotReloadCallback.Stub() {
             @Override
-            public void onHotReloadDone(int code, String message) {
+            public void onHotReloadResult(int code, String message) {
                 try {
-                    callback.onHotReloadDone(process, HotReloadResult.from(code, message));
+                    callback.onHotReloadResult(target, HotReloadResult.from(code, message));
                 } finally {
                     hotReloadCallbacks.remove(this);
                 }
@@ -317,7 +327,7 @@ public final class XposedService {
         };
         hotReloadCallbacks.add(remoteCallback);
         try {
-            mService.hotReloadModule(process.targetId, data, remoteCallback);
+            mService.hotReloadModule(target.mTargetId, data, remoteCallback);
         } catch (RemoteException e) {
             hotReloadCallbacks.remove(remoteCallback);
             throw new ServiceException(e);
@@ -325,6 +335,30 @@ public final class XposedService {
             hotReloadCallbacks.remove(remoteCallback);
             throw e;
         }
+    }
+
+    private static HookedTarget toHookedTarget(HookedProcess process) {
+        if (process.processName == null) {
+            throw new ServiceException("Framework returns target with null processName");
+        }
+        return new HookedTarget(
+                process.targetId,
+                process.uid,
+                process.pid,
+                process.processName,
+                toHookedTargetState(process.state),
+                process.loadedVersionCode
+        );
+    }
+
+    private static HookedTarget.State toHookedTargetState(int state) {
+        return switch (state) {
+            case HookedProcess.TARGET_STATE_UP_TO_DATE -> HookedTarget.State.UP_TO_DATE;
+            case HookedProcess.TARGET_STATE_STALE -> HookedTarget.State.STALE;
+            case HookedProcess.TARGET_STATE_RELOADING -> HookedTarget.State.RELOADING;
+            case HookedProcess.TARGET_STATE_FAILED -> HookedTarget.State.FAILED;
+            default -> throw new ServiceException("Invalid hooked target state: " + state);
+        };
     }
 
     /**
