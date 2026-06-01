@@ -42,21 +42,22 @@ interface IXposedService {
      * Raw hot reload status: success.
      */
     const int HOT_RELOAD_SUCCESS = 0;
-
     /**
      * Raw hot reload status: failed.
      */
     const int HOT_RELOAD_FAILED = 1;
-
+    /**
+     * Raw hot reload status: unsupported.
+     */
+    const int HOT_RELOAD_UNSUPPORTED = 2;
     /**
      * Raw hot reload status: target already reloading.
      */
-    const int HOT_RELOAD_IN_PROGRESS = 2;
-
+    const int HOT_RELOAD_IN_PROGRESS = 3;
     /**
      * Raw hot reload status: target process died.
      */
-    const int HOT_RELOAD_PROCESS_DIED = 3;
+    const int HOT_RELOAD_PROCESS_DIED = 4;
 
     // framework details
     int getApiVersion() = 1;
@@ -79,9 +80,10 @@ interface IXposedService {
     /**
      * Requests hot reload for a target returned by getRunningTargets(). Implementations should
      * validate and enqueue the request promptly, then report completion through the callback.
+     * If hot reload is unsupported by framework policy, implementations should report
+     * HOT_RELOAD_UNSUPPORTED through the callback.
      *
-     * @throws SecurityException if the target id is invalid, no longer belongs to this module, or
-     *                           hot reload is denied by framework policy
+     * @throws SecurityException if the target id is invalid or no longer belongs to this module
      */
     void hotReloadModule(long targetId, in Bundle data, IHotReloadCallback callback) = 14;
 

@@ -23,9 +23,19 @@ public record HotReloadResult(@NonNull Status status, @Nullable String message) 
         SUCCESS,
 
         /**
-         * Hot reload failed or was refused before completion.
+         * Hot reload was attempted but failed before completion.
          */
         FAILED,
+
+        /**
+         * The target does not support hot reload.
+         * <p>
+         * For example, this can be returned for modules that do not declare exactly one Java
+         * entry class, modules with native entries, or targets where module code has loaded a
+         * native library.
+         * </p>
+         */
+        UNSUPPORTED,
 
         /**
          * The target is already being hot-reloaded.
@@ -42,6 +52,7 @@ public record HotReloadResult(@NonNull Status status, @Nullable String message) 
         var status = switch (code) {
             case IXposedService.HOT_RELOAD_SUCCESS -> Status.SUCCESS;
             case IXposedService.HOT_RELOAD_FAILED -> Status.FAILED;
+            case IXposedService.HOT_RELOAD_UNSUPPORTED -> Status.UNSUPPORTED;
             case IXposedService.HOT_RELOAD_IN_PROGRESS -> Status.IN_PROGRESS;
             case IXposedService.HOT_RELOAD_PROCESS_DIED -> Status.PROCESS_DIED;
             default -> throw new XposedService.ServiceException("Invalid hot reload status code: " + code);

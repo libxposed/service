@@ -53,6 +53,11 @@ public final class XposedService {
 
     /**
      * The framework currently permits hot reload through the service.
+     * <p>
+     * This property is not set when hot reload is unsupported by module-wide framework policy,
+     * such as modules that do not declare exactly one Java entry class or modules with native
+     * entries. Target-specific restrictions are reported through {@link HotReloadResult.Status#UNSUPPORTED}.
+     * </p>
      */
     public static final long PROP_RT_HOT_RELOAD = IXposedService.PROP_RT_HOT_RELOAD;
 
@@ -293,7 +298,8 @@ public final class XposedService {
      * targets returned by {@link #getRunningTargets()}.
      * <p>
      * This method only validates and submits the request. The actual reload result is delivered
-     * asynchronously through {@code callback}.
+     * asynchronously through {@code callback}. If the target is not hot-reloadable, the callback
+     * receives {@link HotReloadResult.Status#UNSUPPORTED}.
      * </p>
      * <p>
      * The optional data should contain only values that can be unmarshalled without the module's
@@ -301,13 +307,17 @@ public final class XposedService {
      * instances. Do not put module-defined {@link android.os.Parcelable} or
      * {@link java.io.Serializable} objects in this bundle.
      * </p>
+     * <p>
+     * Hot reload is unsupported for modules that do not declare exactly one Java entry class,
+     * modules with native entries, and targets where module code has loaded a native library. Such
+     * targets require a process restart before they can run new native code.
+     * </p>
      *
      * @param target   The target process
      * @param data     Optional data to be passed to the old module
      * @param callback Callback to be invoked when the request completes or fails
      * @throws ServiceException  If the service is dead or an error occurred
-     * @throws SecurityException If the target is invalid, no longer belongs to this module, or hot
-     *                           reload is denied by framework policy
+     * @throws SecurityException If the target is invalid or no longer belongs to this module
      */
     @SinceApi(API_102)
     public void hotReloadModule(@NonNull HookedTarget target, @Nullable Bundle data,
