@@ -33,7 +33,8 @@ public final class HookedTarget {
         RELOADING,
 
         /**
-         * The target failed to complete the last hot reload attempt.
+         * The target's last hot reload attempt failed because the old module refused reload or
+         * reload raised an exception.
          */
         FAILED
     }

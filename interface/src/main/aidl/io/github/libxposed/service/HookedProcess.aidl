@@ -20,7 +20,8 @@ parcelable HookedProcess {
     const int TARGET_STATE_RELOADING = 2;
 
     /**
-     * The target failed to complete the last hot reload attempt.
+     * The target's last hot reload attempt failed because the old module refused reload or reload
+     * raised an exception.
      */
     const int TARGET_STATE_FAILED = 3;
 

@@ -43,7 +43,7 @@ interface IXposedService {
      */
     const int HOT_RELOAD_SUCCEEDED = 0;
     /**
-     * Raw hot reload status: failed.
+     * Raw hot reload status: module refused reload or reload raised an exception.
      */
     const int HOT_RELOAD_FAILED = 1;
     /**

@@ -302,6 +302,12 @@ public final class XposedService {
      * receives {@link HotReloadResult.Status#UNSUPPORTED}.
      * </p>
      * <p>
+     * If the old module rejects reload by returning {@code false} from {@code onHotReloading},
+     * the callback receives {@link HotReloadResult.Status#FAILED} with a null message. If reload
+     * fails because of an exception, the callback receives {@link HotReloadResult.Status#FAILED}
+     * with a framework-provided diagnostic message.
+     * </p>
+     * <p>
      * The optional data should contain only values that can be unmarshalled without the module's
      * class loader, such as primitive values, strings, arrays, and framework {@link Bundle}
      * instances. Do not put module-defined {@link android.os.Parcelable} or

@@ -9,7 +9,9 @@ import io.github.libxposed.annotation.SinceApi;
  * Result of an asynchronous hot reload request.
  *
  * @param status  The completion status
- * @param message Optional framework-provided diagnostic message
+ * @param message Optional framework-provided diagnostic message. For {@link Status#FAILED}, a
+ *                null message means the old module refused reload by returning {@code false} from
+ *                {@code onHotReloading}; a non-null message describes a reload exception.
  */
 @SinceApi(XposedService.API_102)
 public record HotReloadResult(@NonNull Status status, @Nullable String message) {
@@ -23,7 +25,12 @@ public record HotReloadResult(@NonNull Status status, @Nullable String message) 
         SUCCEEDED,
 
         /**
-         * Hot reload was attempted but failed before completion.
+         * The old module refused reload, or hot reload raised an exception.
+         * <p>
+         * When the old module refuses reload by returning {@code false} from
+         * {@code onHotReloading}, {@link HotReloadResult#message()} is null. When reload fails
+         * because of an exception, the message contains a framework-provided diagnostic string.
+         * </p>
          */
         FAILED,
 
