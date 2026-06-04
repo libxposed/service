@@ -20,7 +20,7 @@ public record HotReloadResult(@NonNull Status status, @Nullable String message) 
         /**
          * Hot reload completed successfully.
          */
-        SUCCESS,
+        SUCCEEDED,
 
         /**
          * Hot reload was attempted but failed before completion.
@@ -50,7 +50,7 @@ public record HotReloadResult(@NonNull Status status, @Nullable String message) 
 
     static HotReloadResult from(int code, @Nullable String message) {
         var status = switch (code) {
-            case IXposedService.HOT_RELOAD_SUCCESS -> Status.SUCCESS;
+            case IXposedService.HOT_RELOAD_SUCCEEDED -> Status.SUCCEEDED;
             case IXposedService.HOT_RELOAD_FAILED -> Status.FAILED;
             case IXposedService.HOT_RELOAD_UNSUPPORTED -> Status.UNSUPPORTED;
             case IXposedService.HOT_RELOAD_IN_PROGRESS -> Status.IN_PROGRESS;

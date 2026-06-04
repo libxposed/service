@@ -34,14 +34,14 @@ interface IXposedService {
      */
     const long PROP_RT_API_PROTECTION = 1L << 2;
     /**
-     * Framework property bit: hot reload is currently permitted.
+     * Framework property bit: framework policy allows hot reload requests.
      */
     const long PROP_RT_HOT_RELOAD = 1L << 3;
 
     /**
-     * Raw hot reload status: success.
+     * Raw hot reload status: succeeded.
      */
-    const int HOT_RELOAD_SUCCESS = 0;
+    const int HOT_RELOAD_SUCCEEDED = 0;
     /**
      * Raw hot reload status: failed.
      */
@@ -80,7 +80,7 @@ interface IXposedService {
     /**
      * Requests hot reload for a target returned by getRunningTargets(). Implementations should
      * validate and enqueue the request promptly, then report completion through the callback.
-     * If hot reload is unsupported by framework policy, implementations should report
+     * If hot reload is unsupported for the module or target, implementations should report
      * HOT_RELOAD_UNSUPPORTED through the callback.
      *
      * @throws SecurityException if the target id is invalid or no longer belongs to this module
