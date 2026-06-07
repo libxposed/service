@@ -308,15 +308,9 @@ public final class XposedService {
      * with a framework-provided diagnostic message.
      * </p>
      * <p>
-     * The optional data should contain only values that can be unmarshalled without the module's
-     * class loader, such as primitive values, strings, arrays, and framework {@link Bundle}
-     * instances. Do not put module-defined {@link android.os.Parcelable} or
-     * {@link java.io.Serializable} objects in this bundle.
-     * </p>
-     * <p>
-     * Hot reload is unsupported for modules that do not declare exactly one Java entry class,
-     * modules with native entries, and targets where module code has loaded a native library. Such
-     * targets require a process restart before they can run new native code.
+     * The optional data should contain only classloader-neutral values that can be unmarshalled
+     * without the module's class loader. Do not put module-defined
+     * {@link android.os.Parcelable} or {@link java.io.Serializable} objects in this bundle.
      * </p>
      *
      * @param target   The target process

@@ -38,8 +38,7 @@ public record HotReloadResult(@NonNull Status status, @Nullable String message) 
          * The target does not support hot reload.
          * <p>
          * For example, this can be returned for modules that do not declare exactly one Java
-         * entry class, modules with native entries, or targets where module code has loaded a
-         * native library.
+         * entry class or targets that are not accepted by framework policy.
          * </p>
          */
         UNSUPPORTED,
