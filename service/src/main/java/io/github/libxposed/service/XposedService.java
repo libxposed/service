@@ -298,8 +298,8 @@ public final class XposedService {
      * targets returned by {@link #getRunningTargets()}.
      * <p>
      * This method only validates and submits the request. The actual reload result is delivered
-     * asynchronously through {@code callback}. If the target is not hot-reloadable, the callback
-     * receives {@link HotReloadResult.Status#UNSUPPORTED}.
+     * asynchronously through {@code callback}. If the framework cannot provide a valid new module
+     * generation for the target, the callback receives {@link HotReloadResult.Status#UNSUPPORTED}.
      * </p>
      * <p>
      * If the old module rejects reload by returning {@code false} from {@code onHotReloading},
