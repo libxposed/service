@@ -51,16 +51,6 @@ public final class XposedService {
      */
     public static final long PROP_RT_API_PROTECTION = IXposedService.PROP_RT_API_PROTECTION;
 
-    /**
-     * Framework policy allows this module to request hot reload through the service.
-     * <p>
-     * This property only describes framework policy, such as a safety option. It does not
-     * guarantee that any target is hot-reloadable or that a hot reload request can complete.
-     * Module and target restrictions are reported through {@link HotReloadResult.Status#UNSUPPORTED}.
-     * </p>
-     */
-    public static final long PROP_RT_HOT_RELOAD = IXposedService.PROP_RT_HOT_RELOAD;
-
     public static final class ServiceException extends RuntimeException {
         ServiceException(String message) {
             super(message);
