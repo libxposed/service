@@ -298,6 +298,12 @@ public final class XposedService {
      * with a framework-provided diagnostic message.
      * </p>
      * <p>
+     * Hot reload is intended for loading a new module generation after the module app is updated.
+     * It should not be used to propagate configuration changes. For configuration updates, use
+     * {@link #getRemotePreferences(String)} and
+     * {@link SharedPreferences.OnSharedPreferenceChangeListener}.
+     * </p>
+     * <p>
      * The optional data should contain only classloader-neutral values that can be unmarshalled
      * without the module's class loader. Do not put module-defined
      * {@link android.os.Parcelable} or {@link java.io.Serializable} objects in this bundle.
