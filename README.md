@@ -17,6 +17,20 @@ dependencies {
 }
 ```
 
+### Direct Boot
+
+The library's `XposedProvider` is Direct Boot aware, so Xposed frameworks can deliver
+service binders before the user unlocks the device for the first time after a reboot.
+The module app's `Application` initialization and service listener callbacks must
+therefore be safe to run before user unlock. Use
+`Context.createDeviceProtectedStorageContext()` for local data needed at that time,
+or defer access to credential-protected storage until `UserManager.isUserUnlocked()`
+returns `true`. Remote preferences and files are managed by the Xposed framework;
+their availability before unlock depends on the framework implementation.
+
+See [Android's Direct Boot guide](https://developer.android.com/privacy-and-security/direct-boot)
+for storage and lifecycle details.
+
 ### For Framework Developers
 
 ```kotlin

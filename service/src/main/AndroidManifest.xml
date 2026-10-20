@@ -5,6 +5,7 @@
         <provider
             android:name=".XposedProvider"
             android:authorities="${applicationId}.XposedService"
+            android:directBootAware="true"
             android:exported="true"
             tools:ignore="ExportedContentProvider" />
     </application>
