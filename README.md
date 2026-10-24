@@ -13,7 +13,7 @@ Modern Xposed Service — communication interface between Xposed framework and m
 
 ```kotlin
 dependencies {
-    implementation("io.github.libxposed:service:102.0.0")
+    implementation("io.github.libxposed:service:102.0.1")
 }
 ```
 
@@ -35,7 +35,7 @@ for storage and lifecycle details.
 
 ```kotlin
 dependencies {
-    implementation("io.github.libxposed:interface:102.0.0")
+    implementation("io.github.libxposed:interface:102.0.1")
 }
 ```
 

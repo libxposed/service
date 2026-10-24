@@ -34,7 +34,7 @@ android {
     }
 }
 
-val libVersion = "102.0.0"
+val libVersion = "102.0.1"
 val publishSnapshot = providers.gradleProperty("publishSnapshot").orNull == "true"
 fun String.real(snapshot: Boolean) = if (snapshot) "$this-SNAPSHOT" else this
 
