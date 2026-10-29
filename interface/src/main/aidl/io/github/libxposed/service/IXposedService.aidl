@@ -17,9 +17,13 @@ interface IXposedService {
      */
     const int API_102 = 102;
     /**
+     * API version 103.
+     */
+    const int API_103 = 103;
+    /**
      * API version implemented by this interface.
      */
-    const int LIB_API = API_102;
+    const int LIB_API = API_103;
 
     /**
      * Framework property bit: system process hooking is supported.
@@ -33,6 +37,10 @@ interface IXposedService {
      * Framework property bit: runtime API protection is enforced.
      */
     const long PROP_RT_API_PROTECTION = 1L << 2;
+    /**
+     * Framework property bit: hooked processes can bind a module application service.
+     */
+    const long PROP_CAP_REMOTE_SERVICE = 1L << 3;
     /**
      * Raw hot reload status: succeeded.
      */

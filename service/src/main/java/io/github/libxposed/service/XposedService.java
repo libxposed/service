@@ -37,6 +37,11 @@ public final class XposedService {
     public static final int API_102 = IXposedService.API_102;
 
     /**
+     * API version 103. Hooked processes can bind a module application service.
+     */
+    public static final int API_103 = IXposedService.API_103;
+
+    /**
      * The framework has the capability to hook system_server and other system processes.
      */
     public static final long PROP_CAP_SYSTEM = IXposedService.PROP_CAP_SYSTEM;
@@ -50,6 +55,11 @@ public final class XposedService {
      * The framework disallows accessing Xposed API via reflection or dynamically loaded code.
      */
     public static final long PROP_RT_API_PROTECTION = IXposedService.PROP_RT_API_PROTECTION;
+
+    /**
+     * The framework supports binding a module application service from hooked processes.
+     */
+    public static final long PROP_CAP_REMOTE_SERVICE = IXposedService.PROP_CAP_REMOTE_SERVICE;
 
     public static final class ServiceException extends RuntimeException {
         ServiceException(String message) {
