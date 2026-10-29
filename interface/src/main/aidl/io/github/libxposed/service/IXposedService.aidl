@@ -17,17 +17,13 @@ interface IXposedService {
      */
     const int API_102 = 102;
     /**
-     * API version 103. Hooked processes can query loaded package DEX files.
+     * API version 103. Hooked processes can bind a module application service.
      */
     const int API_103 = 103;
     /**
-     * API version 104. Hooked processes can bind a module application service.
-     */
-    const int API_104 = 104;
-    /**
      * API version implemented by this interface.
      */
-    const int LIB_API = API_104;
+    const int LIB_API = API_103;
 
     /**
      * Framework property bit: system process hooking is supported.
