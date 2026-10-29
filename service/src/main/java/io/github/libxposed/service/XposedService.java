@@ -37,9 +37,14 @@ public final class XposedService {
     public static final int API_102 = IXposedService.API_102;
 
     /**
-     * API version 103. Hooked processes can bind a module application service.
+     * API version 103. Hooked processes can query loaded package DEX files.
      */
     public static final int API_103 = IXposedService.API_103;
+
+    /**
+     * API version 104. Hooked processes can bind a module application service.
+     */
+    public static final int API_104 = IXposedService.API_104;
 
     /**
      * The framework has the capability to hook system_server and other system processes.
