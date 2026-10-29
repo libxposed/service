@@ -38,10 +38,6 @@ interface IXposedService {
      */
     const long PROP_RT_API_PROTECTION = 1L << 2;
     /**
-     * Framework property bit: hooked processes can bind a module application service.
-     */
-    const long PROP_CAP_REMOTE_SERVICE = 1L << 3;
-    /**
      * Raw hot reload status: succeeded.
      */
     const int HOT_RELOAD_SUCCEEDED = 0;

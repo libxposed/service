@@ -56,11 +56,6 @@ public final class XposedService {
      */
     public static final long PROP_RT_API_PROTECTION = IXposedService.PROP_RT_API_PROTECTION;
 
-    /**
-     * The framework supports binding a module application service from hooked processes.
-     */
-    public static final long PROP_CAP_REMOTE_SERVICE = IXposedService.PROP_CAP_REMOTE_SERVICE;
-
     public static final class ServiceException extends RuntimeException {
         ServiceException(String message) {
             super(message);
